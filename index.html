@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBSESSION DOMAIN</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="background">
+        <canvas id="boidsCanvas"></canvas>
+    </div>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <button id="menu-toggle" class="menu-toggle">
+            ☰
+        </button>
+
+        <!-- Home Button -->
+        <a href="./" id="home-button" class="home-button">OBSESSION DOMAIN</a>
+
+        <div class="search-toggle-container">
+            <button type="button" class="search-icon-button">🔍</button>
+            <input type="search" id="search" class="search-input" placeholder="Search...">
+        </div>
+    </nav>
+        <!-- Dropdown Menu for Sorting and Viewing Options -->
+        <div class="dropdown-menu" id="dropdown-menu">
+            <!-- Sorting Options -->
+            <div class="sort-by">
+                <p class="menu-title">Sorting Options</p>
+                <hr style="border: 1px solid #838383;">
+                <ul class="sort-options">
+                    <p class="menu-title" style="font-style: italic;">Date</p>
+                    <li class="sort-option">2024</li>
+                    <li class="sort-option">2023</li>
+                    <li class="sort-option">2022</li>
+                    <li class="sort-option">2021</li>
+                    <!-- Other date options -->
+                    <p class="menu-title" style="font-style: italic;">Medium</p>
+                    <li class="sort-option">Animation</li>
+                    <li class="sort-option">3D Print</li>
+                    <li class="sort-option">Digital Drawing</li>
+                    <!-- Other medium options -->
+                </ul>
+
+            </div>
+
+            <!-- Viewing Options -->
+            <div class="view-by">
+
+                <p class="menu-title">View</p>
+                <hr style="border: 1px solid #838383;">
+
+                <ul class="view-options">
+                    <li class="view-option">Large</li>
+                    <li class="view-option">Small</li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="gallery-view" id="gallery-view">
+            <!-- Thumbnails will be dynamically inserted here -->
+        </div>
+        
+    </main>
+    <script src="script.js"></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js
+    "></script>
+        <script src="boid.js"> </script>
+</body>
+    
+</body>
+</html>

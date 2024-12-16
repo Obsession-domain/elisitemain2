@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhanced Boid Simulation</title>
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  background: #000000;
+}
+</style>
+</head>
+<body>
+<canvas id="boidCanvas"></canvas>
+<script>
+const canvas = document.getElementById('boidCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const boidImages = {
+  guy1: new Image(),
+  guy2: new Image(),
+  guy3: new Image()
+};
+
+boidImages.guy1.src = 'guy1.png';
+boidImages.guy2.src = 'guy2.png';
+boidImages.guy3.src = 'guy3.png';
+
+const BOID_COUNT = 50;
+const VISION_RADIUS = 50;
+const SEPARATION_DISTANCE = 25;
+const MAX_SPEED = 3;
+
+// Helper functions
+function distance(boid1, boid2) {
+  return Math.sqrt((boid1.position.x - boid2.position.x) ** 2 + (boid1.position.y - boid2.position.y) ** 2);
+}
+
+function clampVelocity(velocity) {
+  const speed = Math.sqrt(velocity.x ** 2 + velocity.y ** 2);
+  if (speed > MAX_SPEED) {
+    velocity.x = (velocity.x / speed) * MAX_SPEED;
+    velocity.y = (velocity.y / speed) * MAX_SPEED;
+  }
+  return velocity;
+}
+
+// Boid class definition
+class Boid {
+  constructor(image) {
+    this.position = { x: Math.random() * canvas.width, y: Math.random() * canvas.height };
+    this.velocity = { x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 10 };
+    this.image = image;
+  }
+
+  draw() {
+    ctx.drawImage(this.image, this.position.x - this.image.width / 2, this.position.y - this.image.height / 2);
+  }
+
+  update(boids) {
+    let alignment = { x: 0, y: 0 };
+    let cohesion = { x: 0, y: 0 };
+    let separation = { x: 0, y: 0 };
+    let total = 0;
+
+    for (let other of boids) {
+      let d = distance(this, other);
+      if (other !== this && d < VISION_RADIUS) {
+        alignment.x += other.velocity.x;
+        alignment.y += other.velocity.y;
+        cohesion.x += other.position.x;
+        cohesion.y += other.position.y;
+        if (d < SEPARATION_DISTANCE) {
+          separation.x += this.position.x - other.position.x;
+          separation.y += this.position.y - other.position.y;
+        }
+        total++;
+      }
+    }
+
+    if (total > 0) {
+      alignment.x /= total;
+      alignment.y /= total;
+      cohesion.x /= total;
+      cohesion.y /= total;
+      cohesion.x = (cohesion.x - this.position.x) / 100;
+      cohesion.y = (cohesion.y - this.position.y) / 100;
+      separation.x /= total;
+      separation.y /= total;
+    }
+
+    this.velocity.x += alignment.x + cohesion.x + separation.x;
+    this.velocity.y += alignment.y + cohesion.y + separation.y;
+
+    this.velocity = clampVelocity(this.velocity);
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
+
+    // Edge wrapping
+    if (this.position.x > canvas.width) this.position.x = 0;
+    if (this.position.y > canvas.height) this.position.y = 0;
+    if (this.position.x < 0) this.position.x = canvas.width;
+    if (this.position.y < 0) this.position.y = canvas.height;
+  }
+}
+
+// Array to store all boids
+const boids = [];
+
+for (let i = 0; i < BOID_COUNT; i++) {
+  boids.push(new Boid(boidImages.guy1));
+}
+
+// Animation loop
+function animate() {
+  requestAnimationFrame(animate);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  boids.forEach(boid => {
+    boid.update(boids);
+    boid.draw();
+  });
+}
+
+animate();
+</script>
+</body>
+</html>
