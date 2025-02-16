@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 function loadGalleryItemsFromJSON() {
-    fetch('gallery-items.json')
+    fetch('shop-items.json')
         .then(response => response.json())
         .then(data => {
             currentItems = data;
@@ -144,13 +144,15 @@ function loadGalleryItemDetails(id) {
         <h3>${item.title}</h3>
         <p>${item.year}, ${item.medium}</p>
         <p>${item.description}</p>
-        <div id="paypal-container-${item.paypalButtonId}" class="paypal-container"></div>
+        <div id="paypal-container-${item.paypalButtonId}" class="paypal-container">
+            <paypal-add-to-cart-button data-id="${item.paypalButtonId}"></paypal-add-to-cart-button>
+        </div>
     `;
 
     if (item.paypalButtonId) {
         setTimeout(() => {
-            paypal.HostedButtons({
-                hostedButtonId: item.paypalButtonId,
+            cartPaypal.AddToCart({
+                id: item.paypalButtonId
             }).render(`#paypal-container-${item.paypalButtonId}`);
         }, 500);
     }

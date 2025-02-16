@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "title": "Sunset Dreams",
+    "title": "SHOP ITEM",
     "year": 2024,
     "medium": "Digital Drawing",
     "description": "A digital drawing of a beautiful sunset.",
@@ -14,7 +14,8 @@
         "type": "image",
         "url": "https://static.planetminecraft.com/files/avatar/811856.png"
       }
-    ]
+    ],
+    "paypalButtonId": "V39STDRP7XVGW"
 
   },
   {

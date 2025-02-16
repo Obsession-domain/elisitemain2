@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OBSESSION DOMAIN</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="Q9K8ADUD9H9FQ"></script>
 </head>
 <body>
     <div id="background">
         <canvas id="boidsCanvas"></canvas>
     </div>
     <!-- Navigation Bar -->
+     
     <nav class="navbar">
         <div class="navbar-top">
             <button id="menu-toggle" class="menu-toggle">
@@ -20,17 +22,26 @@
             <!-- Home Button -->
             <a href="./" id="home-button" class="home-button">OBSESSION DOMAIN</a>
     
-            <div class="search-toggle-container">
-                <button type="button" class="search-icon-button">🔍</button>
-                <input type="search" id="search" class="search-input" placeholder="Search...">
+            <div style="padding: -5px;">
+                <paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
+                    <script>
+                      cartPaypal.Cart({ id: "pp-view-cart" })
+                    </script>
+                    
             </div>
+            
+            
+
         </div>
         
         <div class="galleryshop-container">
-            <a href="./" class="galleryshop-button" style="color: red;">Gallery</a>
-            <a href="./shop.html" class="galleryshop-button">Shop</a>
+            <a href="./" class="galleryshop-button">Gallery</a>
+            <a href="./shop.html" class="galleryshop-button" style="color: red;">Shop</a>
         </div>
+        
+        
     </nav>
+    
     
     
 
@@ -69,7 +80,10 @@
                 </ul>
             </div>
         </div>
+    
+        
     </nav>
+   
     <!-- Main Content -->
     <main class="main-content">
         <div class="gallery-view" id="gallery-view">
@@ -77,13 +91,12 @@
         </div>
         
     </main>
-    <script src="script.js"></script>
+    <script src="scriptshop.js"></script>
     <script src="
     https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js
     "></script>
         <script src="boid.js"> </script>
 
-        <script src="https://www.paypal.com/sdk/js?client-id=BAAlQGH9RyTmi2dYIavPsMU0mivuGx_THo4oBImEIHVnyT-RcSmLBxJ2w0NZ97wXchpHS_tJMMFKkrZJac&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
 
     </body>
 
