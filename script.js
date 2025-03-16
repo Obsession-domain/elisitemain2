@@ -7,19 +7,19 @@ let dropdownMenu;
 let searchContainer;
 document.addEventListener('DOMContentLoaded', (event) => {
     galleryView = document.getElementById('gallery-view');
-    searchIcon = document.querySelector('.search-icon-button');
-    searchInput = document.querySelector('.search-input');
     menuToggle = document.getElementById('menu-toggle');
     dropdownMenu = document.getElementById('dropdown-menu');
-    searchContainer = document.querySelector('.search-toggle-container');
 
-    // Load gallery items
-    loadGalleryItemsFromJSON();
-    toggleGalleryView('large');
-
-    // Setup event listeners
-    setupEventListeners();
-});
+     // New code for the dropdown search
+     const dropdownSearch = document.getElementById('dropdown-search');
+    
+     // Load gallery items
+     loadGalleryItemsFromJSON();
+     toggleGalleryView('large');
+ 
+     // Setup event listeners
+     setupEventListeners(dropdownSearch);
+ });
 
 function loadGalleryItemsFromJSON() {
     fetch('gallery-items.json')
@@ -84,7 +84,47 @@ function sortAndViewHandler(event) {
     }
 }
 
+function setupEventListeners(dropdownSearch) {
+    // Update click handler to prevent dropdown closing when clicking inside it
+    document.addEventListener('click', (event) => {
+        // Only close dropdown if click is outside both the dropdown menu AND the menu toggle
+        if (!dropdownMenu.contains(event.target) && event.target !== menuToggle) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+    
+    menuToggle.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
+    
+    // Event listener for the dropdown search
+    if (dropdownSearch) {
+        // Search on pressing Enter key
+        dropdownSearch.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const searchTerm = this.value.trim().toLowerCase();
+                searchGalleryItems(searchTerm, currentItems);
+            }
+        });
 
+        // Search on clicking the search icon
+        const searchIcon = document.getElementById('search-icon');
+        if (searchIcon) {
+            searchIcon.addEventListener('click', function() {
+                const searchTerm = dropdownSearch.value.trim().toLowerCase();
+                searchGalleryItems(searchTerm, currentItems);
+            });
+        }
+        
+        // Prevent the dropdown from closing when clicking on the search input
+        dropdownSearch.addEventListener('click', function(event) {
+            // Stop the event from propagating up to the document click handler
+            event.stopPropagation();
+        });
+    }
+    
+    document.querySelectorAll('.sort-option, .view-option').forEach(option => {
+        option.addEventListener('click', sortAndViewHandler);
+    });
+}
 
 function loadGalleryItems(items, forceSmallView = false) {
     galleryView.innerHTML = '';
@@ -119,72 +159,102 @@ function createGalleryItem(item, isSmallView) {
 
 
 
-// Helper debounce function to limit how often a function is called
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(...args), wait);
-    };
-}
+
 
 function loadGalleryItemDetails(id) {
     const item = currentItems.find(item => item.id.toString() === id);
-    galleryView.innerHTML = `<div class="gallery-item-detail"></div>`; 
-    const detailView = galleryView.querySelector('.gallery-item-detail');
+    galleryView.innerHTML = `
+        <div class="gallery-item-detail">
+            <div class="media-column">
+                <div class="main-media-container"></div>
+                <div class="thumbnails-container"></div>
+            </div>
+            <div class="details-column">
+                <div class="media-details"></div>
+            </div>
+        </div>
+    `;
 
-    item.media.forEach(media => {
+    const detailView = galleryView.querySelector('.gallery-item-detail');
+    const mainMediaContainer = detailView.querySelector('.main-media-container');
+    const thumbnailsContainer = detailView.querySelector('.thumbnails-container');
+    const mediaDetails = detailView.querySelector('.media-details');
+    let currentMediaIndex = 0;
+
+    // Function to display the main media (image or video)
+    function showMedia(index) {
+        mainMediaContainer.innerHTML = ''; // Clear previous media
+        mediaDetails.innerHTML = ''; // Clear previous details
+        
+        const media = item.media[index];
         const mediaElement = media.type === 'video' ?
             `<video controls src="${media.url}" class="gallery-detail-media"></video>` :
             `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
-        detailView.innerHTML += mediaElement;
-    });
+        
+        // Add media to main container
+        mainMediaContainer.innerHTML = mediaElement;
 
-    detailView.innerHTML += `
-        <h3>${item.title}</h3>
-        <p>${item.year}, ${item.medium}</p>
-        <p>${item.description}</p>
-        <div id="paypal-container-${item.paypalButtonId}" class="paypal-container"></div>
-    `;
+        // Add details to separate container
+        mediaDetails.innerHTML = `
+            <h3>${item.title}</h3>
+            <p>${item.year}, ${item.medium}</p>
+            <p>${item.description}</p>
+        `;
+       
+        const detailsColumn = detailView.querySelector('.details-column');
+        detailsColumn.innerHTML += `
+            <div id="paypal-container-${item.paypalButtonId}" class="paypal-container"></div>
+        `;
 
-    if (item.paypalButtonId) {
-        setTimeout(() => {
-            paypal.HostedButtons({
-                hostedButtonId: item.paypalButtonId,
-            }).render(`#paypal-container-${item.paypalButtonId}`);
-        }, 500);
+        
+
+        
+        if (item.paypalButtonId) {
+            if (typeof paypal !== 'undefined') {
+                paypal.HostedButtons({
+                    hostedButtonId: item.paypalButtonId,
+                }).render(`#paypal-container-${item.paypalButtonId}`);
+            } else {
+                console.error('PayPal SDK not loaded');
+            }
+        }
+
+        // Highlight the active thumbnail
+        updateThumbnails(index);
     }
 
-    attachArrowClickEvents(id, detailView);
-}
+    // Function to create and display thumbnails
+    function createThumbnails() {
+        thumbnailsContainer.innerHTML = ''; // Clear previous thumbnails
+        item.media.forEach((media, index) => {
+            const thumbnail = document.createElement('img');
+            thumbnail.src = media.url;
+            thumbnail.alt = `Thumbnail ${index + 1}`;
+            thumbnail.classList.add('thumbnail');
+            if (index === currentMediaIndex) {
+                thumbnail.classList.add('active');
+            }
+            thumbnail.addEventListener('click', () => {
+                currentMediaIndex = index;
+                showMedia(currentMediaIndex);
+            });
+            thumbnailsContainer.appendChild(thumbnail);
+        });
+    }
 
+    // Function to update the active thumbnail
+    function updateThumbnails(activeIndex) {
+        const thumbnails = thumbnailsContainer.querySelectorAll('.thumbnail');
+        thumbnails.forEach((thumbnail, index) => {
+            thumbnail.classList.toggle('active', index === activeIndex);
+        });
+    }
 
-function attachArrowClickEvents(currentId, detailView) {
-    // Clear previous navigation arrows if any
-    const existingArrows = detailView.querySelectorAll('.nav-arrow');
-    existingArrows.forEach(arrow => arrow.remove());
-
-    // Create left arrow for navigation
-    const leftArrow = document.createElement('button');
-    leftArrow.innerHTML = '←'; // Consider using an icon here
-    leftArrow.className = 'nav-arrow left-arrow';
-    detailView.appendChild(leftArrow);
-
-    // Create right arrow for navigation
-    const rightArrow = document.createElement('button');
-    rightArrow.innerHTML = '→'; // Consider using an icon here
-    rightArrow.className = 'nav-arrow right-arrow';
-    detailView.appendChild(rightArrow);
-
-    // Attach click event to the left arrow
-    leftArrow.addEventListener('click', function() {
-        navigateGallery('prev', currentId);
-    });
-
-    // Attach click event to the right arrow
-    rightArrow.addEventListener('click', function() {
-        navigateGallery('next', currentId);
-    });
+   
+    // Show the first media item initially
+    showMedia(currentMediaIndex);
+    createThumbnails();
+    attachArrowClickEvents();
 }
 
 function navigateGallery(direction, currentId) {
@@ -216,10 +286,23 @@ function navigateGallery(direction, currentId) {
         loadGalleryItems(searchResults);
     }
     function searchGalleryItems(searchTerm, items) {
-        // Filter items based on the search term and call loadGalleryItems with the filtered list
-        const filteredItems = items.filter(item => item.title.toLowerCase().includes(searchTerm));
-        loadGalleryItems(filteredItems);
+      // Filter items based on the search term and call loadGalleryItems with the filtered list
+    const filteredItems = items.filter(item => {
+        return item.title.toLowerCase().includes(searchTerm) || 
+               (item.description && item.description.toLowerCase().includes(searchTerm));
+    });
+    loadGalleryItems(filteredItems);
+}
+
+dropdownMenu.addEventListener('click', function(event) {
+    // This ensures the event doesn't propagate to the document click handler
+    // ONLY if the click is on the search input or other interactive elements
+    if (event.target.matches('input') || 
+        event.target.matches('.sort-option') || 
+        event.target.matches('.view-option')) {
+        event.stopPropagation();
     }
+});
 
    // Event listeners for sorting and view options
 document.querySelectorAll('.sort-option, .view-option').forEach(option => {
@@ -290,4 +373,3 @@ function toggleGalleryView(viewSize = 'large') {
         }
     }
 });
-

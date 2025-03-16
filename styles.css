@@ -12,12 +12,11 @@
     font-style: normal;
 }
 
-
 body, html {
     font-family: 'FoundersGrotesk', sans-serif;
     background-color: #53232300;
-
 }
+
 #background {
     position: fixed;
     top: 0;
@@ -26,17 +25,39 @@ body, html {
     height: 100%;
     z-index: -1; /* Puts it behind everything */
     background-color: #000000;
-
 }
+
 p {
-
     margin: 15px;
-
 }
 
 h3 {
- margin-bottom: 5px;
+    margin-bottom: 5px;
 }
+
+/* Moved menu toggle outside navbar */
+.menu-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    background-color: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(1.5px);
+
+    color: #fff;
+    padding: 8px 12px;
+    z-index: 2001; /* Above navbar */
+    border-radius: 5px;
+    transition: color 0.4s ease, background-color 0.4s ease;
+}
+
+.menu-toggle:hover {
+    color: rgb(0, 0, 0);
+    background-color: red;
+}
+
 .navbar {
     background-color: rgba(255, 255, 255, 0);
     backdrop-filter: blur(1.5px);
@@ -54,26 +75,24 @@ h3 {
     border-radius: 5px;
     transition: background-color 0.5s ease;
 }
+
 .navbar-top {
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Center the home button */
     width: 100%;
     align-items: center;
 }
-.navbar:hover {
-    background-color: rgba(255, 255, 255, 0.088);
 
-}
-/* Ensure that the container for the description doesn't exceed the viewport width */
+
 
 .galleryshop-container {
     display: flex;
     justify-content: center; /* Center horizontally */
     width: 100%;
-    position: relative; /* Remove fixed positioning */
-    transform: none; /* Remove transform */
-    left: 0; /* Remove left positioning */
-    top: 0; /* Remove top positioning */
+    position: relative;
+    transform: none;
+    left: 0;
+    top: 0;
 }
 
 .galleryshop-button {
@@ -82,114 +101,106 @@ h3 {
     font-size: 1.0rem;
     border-radius: 5px;
     margin: -2px 5px;
-    transition: font-size 0.5s ease; /* Smooth transition for hover effect */
+    transition: color 5.0s ease-in-out;
+    
+
 }
 
 .galleryshop-button:hover {
-
-    font-size: 1.2rem;
+    transition: color 1.0s ease-in-out;
+    color: red;
 
 }
 
 .container {
     max-width: 10vw;
-    padding: 0 20px; /* Adjusted padding for better spacing */
+    padding: 0 20px;
     box-sizing: border-box;
 }
 
-
-.menu-toggle {
-    font-size: 1.2rem;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    color: #fff;
-    transition: color 0.4s ease; /* Smooth transition for hover effect */
-
-}
-.menu-toggle:hover {
-color: #000000;
-}
-
 .home-button {
-    text-decoration: none; /* Removes the underline from the link */
-    color: white; /* Text color */
-    font-size: 1.6rem; /* Adjust the font size as needed */
-    cursor: pointer; /* Changes the cursor to a pointer on hover */
-    transition: font-size 0.5s ease; /* Smooth transition for hover effect */
-font-weight: bold;
+    text-decoration: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: color 1.0s ease;
+
+    font-weight: bold;
 }
 
 .home-button:hover {
-font-size: 1.8rem; 
-   transition: font-size 0.5s ease; /* Smooth transition for hover effect */
-
+    color: red;
 }
 
-
-.search-toggle-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-}
-
-.search-input {
-    position: absolute;
-    right: 10%; /* Adjust this based on your layout */
-    top: 120%; /* Position it below the search icon */
-    display: none; /* Initially hidden */
-    width: 700%; /* Take full width of the container or adjust as necessary */
-    /* Ensure to adjust padding, margins, and other properties to fit your design */
-height: 120%;
-}
-
-.search-icon-button.open, .search-input.open {
-    display: block;
-}
-
-.search-icon-button.close, .search-input.close {
-    display: none;
-}
-.search-icon-button {
-
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-
+/* Removed search toggle container styles */
 
 #dropdown-menu {
     display: none;
     position: fixed;
     line-height: 1px;
-    top: 50px; /* Adjusted to account for navbar height */
-    left: 20%;
-    background-color: rgba(255, 255, 255, 0); /* Adjust color and opacity to match mockup */
+    top: 10px; /* Adjusted positioning */
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.8); /* Darker background */
     backdrop-filter: blur(10px);
     color: white;
-    width: 50%; 
+    width: 250px; /* Fixed width for menu */
     box-shadow: 0 4px 8px rgb(0, 0, 0);
-    opacity: 0; /* Starts hidden */
-    pointer-events: none; /* No mouse interaction when hidden */
-    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1999; /* Below menu toggle but above other content */
     border-radius: 5px;
-
+    padding: 10px;
+    margin-top: 40px; /* Space for the menu button */
 }
 
 #dropdown-menu.show {
     display: block;
-    opacity: 1; /* Fully visible */
-    pointer-events: auto; /* Allows mouse interaction */
+    opacity: 1;
+    pointer-events: auto;
+}
+.search-input-container {
+    position: relative;
+    width: 90%;
+    margin: 10px auto;
+}
 
+.search-icon {
+    position: absolute;
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: white;
+}
+
+.search-icon:hover {
+    color: red;
+}
+/* Added styles for the dropdown search */
+.dropdown-search-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.dropdown-search-input {
+    width: 90%;
+    padding: 8px;
+    margin: 10px auto;
+    display: block;
+    border-radius: 5px;
+    border: 1px solid #838383;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.dropdown-search-input::placeholder {
+    color: #aaa;
 }
 
 .menu-title {
-color: #838383;
-margin: 10px;
-font-weight: bold;
-
+    color: #838383;
+    margin: 10px;
+    font-weight: bold;
 }
 
 .sort-options,
@@ -198,26 +209,20 @@ font-weight: bold;
 .view-option {
     padding: 0rem 0.6rem;
     cursor: pointer;
-
-   
-
 }
 
 .sort-option:hover,
 .view-option:hover {
-
     background-color: rgba(255, 255, 255, 0.088);
-border-radius: 5px;
-
+    border-radius: 5px;
 }
 
 .sort-by, .view-by,
 .sort-options li, .view-options li {
-    padding: 10px; /* Add padding */
-    list-style: none; /* Remove bullets */
-    cursor: pointer; /* Pointer cursor on hover */
+    padding: 10px;
+    list-style: none;
+    cursor: pointer;
 }
-
 
 .main-content {
     margin: auto; /* This centers the content */
@@ -253,15 +258,19 @@ border-radius: 5px;
     backdrop-filter: blur(1.5px);
     color: white;
     border-radius: 5px;
-    position: relative; /* For absolute positioning of child elements */
     transition: background-color 0.5s ease; /* Smooth scaling transition */
     box-shadow: 0 4px 8px rgb(0, 0, 0);
+    position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 }
 .gallery-item:hover {
     background-color: rgba(255, 255, 255, 0.088);
 }
 
+
+  
 
 /* Adjustments for gallery item images in large view mode */
 .gallery-view.large .gallery-item .gallery-image {
@@ -329,9 +338,23 @@ border-radius: 5px;
 
 /* Ensure the title is displayed and styled appropriately in large view mode */
 .gallery-view.large .gallery-item .item-title {
+  
     display: block; /* Make sure the title is always visible */
-    /* Additional styling can go here to match your design, such as text alignment, font size, etc. */
+    font-size: 1rem;
 }
+
+:root {
+    --type-ratio: 1.2;
+    --h3: calc(1rem * var(--type-ratio));
+    --h2: calc(var(--h3) * var(--type-ratio));
+    --h1: calc(var(--h2) * var(--type-ratio));
+  }
+  .item-title {
+    font-size: var(--h3);
+    letter-spacing: 0.03em;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+
 .gallery-view.large .gallery-item {
     display: flex;
     flex-direction: column; /* Stacks children (image and text) vertically */
@@ -360,7 +383,6 @@ border-radius: 5px;
     padding: 1rem;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgb(0, 0, 0);
-
     
 }
 /* Large View */
@@ -454,52 +476,98 @@ border-radius: 5px;
 
 
 .nav-arrow {
-    position: fixed;
+    position: absolute;
+    top: 50%;
     transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-    font-size: 3rem;
-    background: none;
     border: none;
+    padding: 10px;
     cursor: pointer;
-    z-index: 10; /* Above other elements */
+    font-size: 24px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    z-index: 3000;
+}
+
+.nav-arrow:hover {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .left-arrow {
-    left: 15px;
+    left: 10px;
 }
 
 .right-arrow {
-    right: 15px;
+    right: 10px;
+}
+
+.media-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Ensuring the detailed view is centered */
 .gallery-item-detail {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: flex-start;
+    max-width: 1200px;
+    padding: 20px;
+    
+    position: relative;
+    text-align: center;
     background-color: rgba(255, 255, 255, 0); /* Adjust color and opacity to match mockup */
     backdrop-filter: blur(1.5px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    min-height: 7vh;
-    padding-left: 5rem;
-    padding-right: 5rem;
-    box-sizing: border-box; /* Ensures padding doesn't break the layout */
-    text-align: center; /* Optional: centers text horizontally */
-    max-width: 100%; /* Ensure the container doesn't overflow */
-    margin: auto; /* Center the container */
+    border-radius: 5px;
     box-shadow: 0 4px 8px rgb(0, 0, 0);
+    margin: 20px auto; /* Center the carousel */
+    
+}
 
+.media-column {
+    flex: 1;
+    min-width: 50%;
+    position: relative;
+}
 
+.media-column {
+    flex: 1;
+    max-width: 1s00px;
+    position: relative;
+}
 
-
+.main-media-container {
+    order: 1;
+    margin-bottom: 15px;
+    width: 100%;
+    padding: 0;
 }
 .gallery-item-detail p {
-    margin: 0 0 0.5rem; /* Adds space between paragraphs */
-    word-wrap: break-word; /* Ensures long words wrap to the next line */
-    max-width: 100%; /* Prevents text overflow */
-    text-align: left;
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #ccc;
 }
+
+.gallery-item-detail h3 {
+        font-size: var(--h1);
+        position: relative;
+        display: inline-block;
+
+}
+
+.gallery-item-detail h3::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #ffffff;
+  } 
+
+
 
 .gallery-item-detail img {
     margin: 3px; /* Add margin around each image */
@@ -518,3 +586,118 @@ border-radius: 5px;
     box-sizing: border-box;
 }
 
+.gallery-detail-image,
+.gallery-detail-media {
+    max-width: 100%;
+    max-height: 60vh;
+    margin: 0 auto 10px auto;
+    border-radius: 8px;
+    display: block;
+}
+
+.media-details {
+    order: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.thumbnails-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.thumbnail {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px;
+    min-height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.thumbnails-container img.thumbnail {
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.thumbnail.active {
+    border-color: #007bff; /* Highlight active thumbnail */
+}
+
+.thumbnail:hover {
+    border-color: #ff0000; /* Highlight on hover */
+}
+
+
+/* PayPal Container */
+.paypal-container {
+    margin-top: 20px;
+}
+
+@keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .gallery-item {
+    animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    opacity: 0;
+  }
+
+  .gallery-item:nth-child(1) { animation-delay: 0.01s; }
+.gallery-item:nth-child(2) { animation-delay: 0.02s; }
+.gallery-item:nth-child(3) { animation-delay: 0.03s; }
+.gallery-item:nth-child(4) { animation-delay: 0.05s; }
+.gallery-item:nth-child(5) { animation-delay: 0.08s; }
+.gallery-item:nth-child(6) { animation-delay: 0.13s; }
+.gallery-item:nth-child(7) { animation-delay: 0.21s; }
+.gallery-item:nth-child(8) { animation-delay: 0.34s; }
+.gallery-item:nth-child(9) { animation-delay: 0.55s; }
+.gallery-item:nth-child(10) { animation-delay: 0.89s; }
+.gallery-item:nth-child(11) { animation-delay: 1.44s; }
+.gallery-item:nth-child(12) { animation-delay: 2.33s; }
+
+  
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+    .home-button {
+        font-size: 1rem;
+    }
+    .gallery-item-detail {
+        flex-direction: column;
+            padding: 10px;
+}
+    
+    .details-column {
+        flex: 1;
+        width: 100%;
+        position: static;
+    }
+    
+    .media-column {
+        max-width: 100%;
+    }
+    .gallery-container {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    
+    
+    
+    .gallery-detail-image,
+    .gallery-detail-media {
+        max-height: 50vh;
+    }
+}
