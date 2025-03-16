@@ -142,21 +142,24 @@ function createGalleryItem(item, isSmallView) {
     galleryItem.className = 'gallery-item';
     galleryItem.dataset.id = item.id;
     galleryItem.innerHTML = `
-    <img src="${item.media[0].url}" alt="${item.title}" class="gallery-image">
-    <div class="text-content">
-      <div class="title-year">
-        <h3 class="item-title">${item.title}</h3>
-        <span class="item-year">${item.year}</span>
-      </div>
-      <p class="item-medium">${item.medium}</p>
-      <p class="item-description">${item.description}</p>
-    </div>
-  `;
+        <img src="${item.media[0].url}" alt="${item.title}" class="gallery-image">
+        <div class="text-content">
+          <div class="title-year">
+            <h3 class="item-title">${item.title}</h3>
+            <span class="item-year">${item.year}</span>
+          </div>
+          <p class="item-medium">${item.medium}</p>
+          <p class="item-description">${item.description}</p>
+         
+    `;
+
+    
 
     galleryItem.addEventListener('click', () => loadGalleryItemDetails(item.id));
     return galleryItem;
 }
 
+  
 
 
 
@@ -196,11 +199,15 @@ function loadGalleryItemDetails(id) {
 
         // Add details to separate container
         mediaDetails.innerHTML = `
-            <h3>${item.title}</h3>
-            <p>${item.year}, ${item.medium}</p>
-            <p>${item.description}</p>
-        `;
-       
+        <h3>${item.title}</h3>
+        <p>${item.year}, ${item.medium}</p>
+        <p>${item.description}</p>
+        ${item.paypalButtonId ? `
+            <div class="paypal-detail-container">
+                <paypal-add-to-cart-button data-id="${item.paypalButtonId}"></paypal-add-to-cart-button>
+            </div>
+        ` : ''}
+    `;
         const detailsColumn = detailView.querySelector('.details-column');
         detailsColumn.innerHTML += `
             <div id="paypal-container-${item.paypalButtonId}" class="paypal-container"></div>
@@ -210,13 +217,7 @@ function loadGalleryItemDetails(id) {
 
         
         if (item.paypalButtonId) {
-            if (typeof paypal !== 'undefined') {
-                paypal.HostedButtons({
-                    hostedButtonId: item.paypalButtonId,
-                }).render(`#paypal-container-${item.paypalButtonId}`);
-            } else {
-                console.error('PayPal SDK not loaded');
-            }
+            cartPaypal.AddToCart({ id: item.paypalButtonId });
         }
 
          // Highlight the active thumbnail
