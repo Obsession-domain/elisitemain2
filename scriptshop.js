@@ -141,8 +141,21 @@ function createGalleryItem(item, isSmallView) {
     const galleryItem = document.createElement('div');
     galleryItem.className = 'gallery-item';
     galleryItem.dataset.id = item.id;
+
+    // Filter media to get only images
+    const images = item.media.filter(m => m.type === 'image');
+    const firstImage = images.length > 0 ? images[0].url : '';
+    const secondImage = images.length > 1 ? images[1].url : '';
+
+    const imageHtml = `
+        <div class="image-container">
+            ${firstImage ? `<img src="${firstImage}" alt="${item.title}" class="gallery-image default-image">` : ''}
+            ${secondImage ? `<img src="${secondImage}" alt="${item.title}" class="gallery-image hover-image">` : ''}
+        </div>
+    `;
+
     galleryItem.innerHTML = `
-        <img src="${item.media[0].url}" alt="${item.title}" class="gallery-image">
+        ${imageHtml}
         <div class="text-content">
           <div class="title-year">
             <h3 class="item-title">${item.title}</h3>
@@ -150,10 +163,8 @@ function createGalleryItem(item, isSmallView) {
           </div>
           <p class="item-medium">${item.medium}</p>
           <p class="item-description">${item.description}</p>
-         
+        </div>
     `;
-
-    
 
     galleryItem.addEventListener('click', () => loadGalleryItemDetails(item.id));
     return galleryItem;
@@ -168,60 +179,75 @@ function loadGalleryItemDetails(id) {
     const item = currentItems.find(item => item.id.toString() === id);
     galleryView.innerHTML = `
         <div class="gallery-item-detail">
+                    <a class="close-detail" href="shop.html" style="text-decoration:none">×</a>
             <div class="media-column">
                 <div class="main-media-container"></div>
                 <div class="thumbnails-container"></div>
             </div>
             <div class="details-column">
                 <div class="media-details"></div>
+                <div id="paypal-anchor-${item.id}" class="paypal-container"></div>
             </div>
         </div>
     `;
 
+    // Reference elements
     const detailView = galleryView.querySelector('.gallery-item-detail');
+    
     const mainMediaContainer = detailView.querySelector('.main-media-container');
     const thumbnailsContainer = detailView.querySelector('.thumbnails-container');
     const mediaDetails = detailView.querySelector('.media-details');
+
+    const scrollPos = window.scrollY;
+    document.documentElement.style.scrollBehavior = 'auto';
+    
+
+    const paypalAnchor = document.getElementById(`paypal-anchor-${item.id}`);
     let currentMediaIndex = 0;
 
-    // Function to display the main media (image or video)
-    function showMedia(index) {
-        mainMediaContainer.innerHTML = ''; // Clear previous media
-        mediaDetails.innerHTML = ''; // Clear previous details
+    
+    if (window.matchMedia('(max-width: 767px)').matches) {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, 0);
+          detailView.scrollIntoView({ behavior: 'auto', block: 'start' });
+          document.documentElement.style.scrollBehavior = '';
+        });
+      }
+      
+    // Initialize PayPal button once when entering detail view
+    if (item.paypalButtonId) {
+        paypalAnchor.innerHTML = `
+            <div class="paypal-detail-container">
+                <paypal-add-to-cart-button data-id="${item.paypalButtonId}"></paypal-add-to-cart-button>
+            </div>
+        `;
+        cartPaypal.AddToCart({ id: item.paypalButtonId });
+
+
         
+    }
+
+    function showMedia(index) {
+        mainMediaContainer.innerHTML = '';
+        mediaDetails.innerHTML = '';
+
         const media = item.media[index];
         const mediaElement = media.type === 'video' ?
             `<video controls src="${media.url}" class="gallery-detail-media"></video>` :
             `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
-        
-        // Add media to main container
+
         mainMediaContainer.innerHTML = mediaElement;
 
-        // Add details to separate container
         mediaDetails.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.year}, ${item.medium}</p>
-        <p>${item.description}</p>
-        ${item.paypalButtonId ? `
-            <div class="paypal-detail-container">
-                <paypal-add-to-cart-button data-id="${item.paypalButtonId}"></paypal-add-to-cart-button>
-            </div>
-        ` : ''}
-    `;
-        const detailsColumn = detailView.querySelector('.details-column');
-        detailsColumn.innerHTML += `
-            <div id="paypal-container-${item.paypalButtonId}" class="paypal-container"></div>
+            <h3>${item.title}</h3>
+            <p>${item.year}, ${item.medium}</p>
+            <p>${item.description}</p>
         `;
 
-        
+        updateThumbnails(index);
 
         
-        if (item.paypalButtonId) {
-            cartPaypal.AddToCart({ id: item.paypalButtonId });
-        }
-
-         // Highlight the active thumbnail
-         updateThumbnails(index);
+    
     }
 
     // Function to create and display thumbnails
@@ -256,6 +282,12 @@ function loadGalleryItemDetails(id) {
     showMedia(currentMediaIndex);
     createThumbnails();
     attachArrowClickEvents();
+
+    galleryView.querySelector('.close-detail').addEventListener('click', () => {
+       // Clear the detail view
+       galleryView.innerHTML = '';
+          });
+
 }
 
 function navigateGallery(direction, currentId) {
@@ -295,15 +327,6 @@ function navigateGallery(direction, currentId) {
     loadGalleryItems(filteredItems);
 }
 
-dropdownMenu.addEventListener('click', function(event) {
-    // This ensures the event doesn't propagate to the document click handler
-    // ONLY if the click is on the search input or other interactive elements
-    if (event.target.matches('input') || 
-        event.target.matches('.sort-option') || 
-        event.target.matches('.view-option')) {
-        event.stopPropagation();
-    }
-});
 
    // Event listeners for sorting and view options
 document.querySelectorAll('.sort-option, .view-option').forEach(option => {
@@ -351,26 +374,3 @@ function toggleGalleryView(viewSize = 'large') {
         });
     });
 
- // Toggle dropdown menu display on menu toggle button click
- menuToggle.addEventListener('click', function() {
-    // Check if the dropdown menu is currently displayed
-    const isDisplayed = dropdownMenu.classList.contains('show');
-    if (isDisplayed) {
-        dropdownMenu.classList.remove('show'); // Hide the dropdown menu
-    } else {
-        dropdownMenu.classList.add('show'); // Show the dropdown menu
-    }
-});
- // Ensure dropdown menu is closed when clicking anywhere outside of it
- window.addEventListener('click', function(event) {
-    if (!event.target.matches('.menu-toggle') && !event.target.matches('.search-icon-button')) { // Modified to ignore search icon clicks
-        var dropdown = document.getElementById('dropdown-menu');
-        if (dropdown.classList.contains('show')) {
-            dropdown.classList.remove('show'); // Modified to use classList for consistency
-        }
-        // New: Close search input if clicking outside of the search container
-        if (!searchContainer.contains(event.target)) {
-            searchInput.style.display = 'none';
-        }
-    }
-});

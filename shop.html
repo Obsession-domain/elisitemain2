@@ -5,24 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OBSESSION DOMAIN</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="scriptshop.js"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=BAAlQGH9RyTmi2dYIavPsMU0mivuGx_THo4oBImEIHVnyT-RcSmLBxJ2w0NZ97wXchpHS_tJMMFKkrZJac&components=hosted-buttons,cart&enable-funding=venmo&currency=USD"></script>
     <script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="Q9K8ADUD9H9FQ"></script>
+    <script src="scriptshop.js"></script>
+
+
 </head>
 <body>
+
     <div id="background">
         <canvas id="boidsCanvas"></canvas>
     </div>
+    <script>
+        cartPaypal.Cart({ id: "pp-view-cart" })
+      </script>
+              <paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
+
     <!-- Navigation Bar -->
      <!-- Menu Toggle Button Outside Navbar -->
     <button id="menu-toggle" class="menu-toggle">
         🔍
     </button>
+    
 </div>
 
-<script>
-  cartPaypal.Cart({ id: "pp-view-cart" })
-</script>
+
    
     <!-- Navigation Bar -->
     <nav class="navbar">
@@ -31,7 +38,6 @@
             <!-- Home Button -->
             <a href="./" id="home-button" class="home-button">OBSESSION DOMAIN</a>
         </div>
-        <paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
     </div>
         <div class="galleryshop-container">
             <a href="./" class="galleryshop-button">Gallery</a>
