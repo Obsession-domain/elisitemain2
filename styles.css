@@ -27,6 +27,18 @@ body, html {
     background-color: #000000;
 }
 
+#background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.653) 50%, rgba(255, 0, 187, 0) 80%,  rgba(0, 0, 0, 0.618) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
 p {
     margin: 15px;
     animation: rainbowtext 3s ease;  
@@ -646,9 +658,8 @@ animation: rainbow 5s ease;
 
 
 /* PayPal Container */
-.paypal-container {
-    margin-top: 20px;
-
+.paypal-container h3{
+    font-size: 2rem !important;
 }
 
 @keyframes slideIn {
@@ -851,6 +862,9 @@ paypal-cart-button {
         display: none !important;
     }
     
+    .paypal-detail-container {
+margin-bottom: 100px;
+    }
     .navbar {
         width: 90%;
         top: 5px;
@@ -890,11 +904,7 @@ paypal-cart-button {
         padding: 5px 8px;
     }
 
-    paypal-cart-button {
-        top: 5px;
-        right: 5px;
-        padding: 5px 10px;
-    }
+    
 
     .gallery-item-detail {
         flex-direction: column;
@@ -913,11 +923,13 @@ paypal-cart-button {
     .item-description {
         -webkit-line-clamp: 3;
     }
-    /* Add this to the 480px media query */
 paypal-cart-button {
     font-size: 0.7rem;
     padding: 3px 6px;
-    transform: scale(0.75);
+    transform: scale(0.7) !important;
+    padding: 2px 4px !important;
+    right: 2px !important;
+    top: 2px !important;
 }
 }
 
@@ -972,7 +984,10 @@ paypal-cart-button {
 paypal-cart-button {
     font-size: 0.7rem;
     padding: 3px 6px;
-    transform: scale(0.85);
+    transform: scale(0.7) !important;
+    padding: 2px 4px !important;
+    right: 2px !important;
+    top: 2px !important;
 }
 }
 

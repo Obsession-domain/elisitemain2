@@ -190,6 +190,7 @@ function loadGalleryItemDetails(id) {
             </div>
         </div>
     `;
+    galleryView.classList.add('detail-view-active');
 
     // Reference elements
     const detailView = galleryView.querySelector('.gallery-item-detail');
@@ -205,14 +206,21 @@ function loadGalleryItemDetails(id) {
     const paypalAnchor = document.getElementById(`paypal-anchor-${item.id}`);
     let currentMediaIndex = 0;
 
+    
     if (window.matchMedia('(max-width: 767px)').matches) {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, 0);
-          detailView.scrollIntoView({ behavior: 'auto', block: 'start' });
-          document.documentElement.style.scrollBehavior = '';
-        });
-      }
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+            detailView.scrollIntoView({ behavior: 'auto', block: 'start' });
+        }, 50); // Short delay for rendering
+    }
 
+    // Close handler - remove class
+    galleryView.querySelector('.close-detail').addEventListener('click', () => {
+        galleryView.classList.remove('detail-view-active');
+        galleryView.innerHTML = '';
+    });
+
+      
     // Initialize PayPal button once when entering detail view
     if (item.paypalButtonId) {
         paypalAnchor.innerHTML = `
