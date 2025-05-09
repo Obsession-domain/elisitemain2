@@ -1,5 +1,9 @@
 const canvas = document.getElementById('boidsCanvas');
-const ctx = canvas.getContext('2d');
+// Basic context without advanced options for better performance
+const ctx = canvas.getContext('2d', { alpha: true });
+
+// Set minimal image smoothing - only if really needed
+ctx.imageSmoothingEnabled = false; // Disable for better performance
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -74,6 +78,7 @@ class Vector {
 
 class Boid {
     constructor(imageArray) {
+        // Generate a random spawn position
         this.position = new Vector(Math.random() * canvas.width, Math.random() * canvas.height);
         this.velocity = new Vector((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4);
         this.acceleration = new Vector();
@@ -81,22 +86,45 @@ class Boid {
         this.maxForce = 0.1;
         this.image = imageArray[Math.floor(Math.random() * imageArray.length)];
         this.radius = 1000;
-        this.scale = Math.random() * 0.1 + 0.01; // Random scale between 0.5 and 1.0
+        this.scale = Math.random() * 0.05 + 0.005;
+        
+        // Add opacity property for fading
+        this.opacity = 0; // Start fully transparent
+        this.fadeState = 'in'; // States: 'in', 'visible', 'out'
+        this.fadeSpeed = 0.01 + Math.random() * 0.02; // Random fade speed
     }
     
-
     edges() {
-        if (this.position.x > canvas.width) this.position.x = 0;
-        if (this.position.x < 0) this.position.x = canvas.width;
-        if (this.position.y > canvas.height) this.position.y = 0;
-        if (this.position.y < 0) this.position.y = canvas.height;
+        // Start fade out when close to an edge
+        const margin = 50; // Margin to start fading
+        
+        if (this.fadeState === 'visible') {
+            if (this.position.x > canvas.width - margin || 
+                this.position.x < margin || 
+                this.position.y > canvas.height - margin || 
+                this.position.y < margin) {
+                this.fadeState = 'out';
+            }
+        }
+        
+        // Teleport to the opposite side when fully invisible
+        if (this.opacity <= 0 && this.fadeState === 'out') {
+            if (this.position.x > canvas.width) this.position.x = 0;
+            if (this.position.x < 0) this.position.x = canvas.width;
+            if (this.position.y > canvas.height) this.position.y = 0;
+            if (this.position.y < 0) this.position.y = canvas.height;
+            this.fadeState = 'in'; // Start fading in again
+        }
     }
 
     align(boids) {
         let perceptionRadius = 90;
         let steering = new Vector();
         let total = 0;
-        for (let other of boids) {
+        // Process only a subset of boids for performance
+        const maxCheck = Math.min(25, boids.length);
+        for (let i = 0; i < maxCheck; i++) {
+            const other = boids[Math.floor(Math.random() * boids.length)];
             let d = this.position.distance(other.position);
             if (other !== this && d < perceptionRadius) {
                 steering.add(other.velocity);
@@ -117,7 +145,10 @@ class Boid {
         let perceptionRadius = 90;
         let steering = new Vector();
         let total = 0;
-        for (let other of boids) {
+        // Process only a subset of boids for performance
+        const maxCheck = Math.min(25, boids.length);
+        for (let i = 0; i < maxCheck; i++) {
+            const other = boids[Math.floor(Math.random() * boids.length)];
             let d = this.position.distance(other.position);
             if (other !== this && d < perceptionRadius) {
                 steering.add(other.position);
@@ -136,14 +167,17 @@ class Boid {
     }
 
     separation(boids) {
-        let perceptionRadius = 50; // Adjusted for more effective separation
+        let perceptionRadius = 50;
         let steering = new Vector();
         let total = 0;
-        for (let other of boids) {
+        // Process only a subset of boids for performance
+        const maxCheck = Math.min(25, boids.length);
+        for (let i = 0; i < maxCheck; i++) {
+            const other = boids[Math.floor(Math.random() * boids.length)];
             let d = this.position.distance(other.position);
             if (other !== this && d < perceptionRadius) {
                 let diff = Vector.subtract(this.position, other.position);
-                diff.divide(d * d); // Repel more strongly at shorter distances
+                diff.divide(d * d);
                 steering.add(diff);
                 total++;
             }
@@ -158,30 +192,54 @@ class Boid {
         return steering;
     }
 
+    updateFade() {
+        // Handle fading in or out
+        if (this.fadeState === 'in' && this.opacity < 1) {
+            this.opacity += this.fadeSpeed;
+            if (this.opacity >= 1) {
+                this.opacity = 1;
+                this.fadeState = 'visible';
+            }
+        } else if (this.fadeState === 'out' && this.opacity > 0) {
+            this.opacity -= this.fadeSpeed;
+            if (this.opacity <= 0) {
+                this.opacity = 0;
+            }
+        }
+    }
+
     update() {
         this.position.add(this.velocity);
         this.velocity.add(this.acceleration);
         this.velocity.limit(this.maxSpeed);
-        this.acceleration.multiply(0); // Reset acceleration each frame
+        this.acceleration.multiply(0);
+        this.updateFade(); // Update opacity based on fade state
         this.edges();
     }
 
     draw() {
+        // Apply the current opacity
+        ctx.globalAlpha = this.opacity;
         
+        // Skip filters for better performance, use simple coloring
+        // More efficient than using CSS filters
         const scaledWidth = this.image.width * this.scale;
         const scaledHeight = this.image.height * this.scale;
+        
+        // Don't round positions - can be performance intensive
+        const x = this.position.x - scaledWidth / 8;
+        const y = this.position.y - scaledHeight / 8;
+        
         ctx.drawImage(
             this.image,
-            this.position.x - scaledWidth / 8, // Center the scaled image
-            this.position.y - scaledHeight / 8,
+            x,
+            y,
             scaledWidth,
             scaledHeight
         );
-        ctx.save();
-        ctx.filter = `blur(${this.blur}px)`;
-        ctx.restore();
-
-
+        
+        // Reset opacity for the next drawings
+        ctx.globalAlpha = 1.0;
     }
 
     flock(boids) {
@@ -196,36 +254,59 @@ class Boid {
 
 class Predator extends Boid {
     constructor(imageArray) {
-        super(imageArray); // Ensure Predator also receives images
-        this.maxSpeed += 0.1; // Predators are faster
-        this.image = imageArray[Math.floor(Math.random() * imageArray.length)]; // Ensure predators have an image
-        this.radius = 9; // Slightly larger
+        super(imageArray);
+        this.maxSpeed += 0.1;
+        this.image = imageArray[Math.floor(Math.random() * imageArray.length)];
+        this.radius = 9;
+        // Predators can have different fade speeds if desired
+        this.fadeSpeed = 0.0001 + Math.random() * 0.025; // Slightly faster fade for predators
     }
-
-    // Predator specific methods can go here
 }
 
-loadImages(['D1.png', 'D2.png', 'D3.png', 'D5.png','D105.png','D205.png','D305.png'], (loadedImages) => {
+loadImages(['./Algae/Algae1.png','./Algae/Algae2.png','./Algae/Algae3.png','./Algae/Algae4.png','./Algae/Algae5.png','./Algae/Algae6.png','./Algae/Algae7.png','./Algae/Algae8.png','./Algae/Algae9.png','./Algae/Algae10.png','./Algae/Algae11.png','./Algae/Algae12.png','./Algae/Algae13.png','./Algae/Algae14.png','./Algae/Algae15.png','./Algae/Algae16.png','./Algae/Algae17.png','./Algae/Algae18.png','./Algae/Algae19.png','./Algae/Algae20.png','./Algae/Algae21.png','./Algae/Algae22.png','./Algae/Algae23.png','./Algae/Algae24.png','./Algae/Algae25.png','./Algae/Algae26.png','./Algae/Algae27.png','./Algae/Algae28.png'], (loadedImages) => {
+    // Reduce the number of entities
     const flock = Array.from({length: 3}, () => new Boid(loadedImages));
-    const predators = Array.from({length: 500}, () => new Predator(loadedImages));
+    const predators = Array.from({length: 100}, () => new Predator(loadedImages));
 
-    function animate() {
+    // Use a lower frame rate for animation
+    let lastFrameTime = 0;
+    const frameInterval = 1000/30; // Aim for 30 FPS instead of 60+
+
+    function animate(currentTime) {
+        // Skip frames to maintain target framerate
+        if (currentTime - lastFrameTime < frameInterval) {
+            requestAnimationFrame(animate);
+            return;
+        }
+        lastFrameTime = currentTime;
+        
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        flock.forEach(boid => {
-            boid.flock(flock);
-            boid.update();
-            boid.draw();
-        });
-        predators.forEach(predator => {
-            predator.flock(flock); // Here, predators interact with the flock
-            predator.update();
-            predator.draw();
-        });
+        
+        // Process entities in batches for better performance
+        const allEntities = [...flock, ...predators];
+        
+        // Update physics first
+        for (let i = 0; i < allEntities.length; i++) {
+            const entity = allEntities[i];
+            
+            // Simplified flocking - don't check ALL boids every frame
+            if (i % 3 === 0) { // Only process 1/3 of interactions per frame
+                entity.flock(allEntities);
+            }
+            
+            entity.update();
+        }
+        
+        // Then handle rendering
+        for (let i = 0; i < allEntities.length; i++) {
+            allEntities[i].draw();
+        }
+        
         requestAnimationFrame(animate);
     }
 
-    animate();
+    animate(0);
 });
 
 window.addEventListener('resize', function() {
