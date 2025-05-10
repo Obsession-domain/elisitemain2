@@ -1,3 +1,6 @@
+let mouseX = -1000; // Start off-screen
+let mouseY = -1000;
+
 const canvas = document.getElementById('boidsCanvas');
 // Basic context without advanced options for better performance
 const ctx = canvas.getContext('2d', { alpha: true });
@@ -6,16 +9,24 @@ const ctx = canvas.getContext('2d', { alpha: true });
 ctx.imageSmoothingEnabled = false; // Disable for better performance
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
+canvas.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  
+  canvas.addEventListener('mouseout', () => {
+    mouseX = -1000; // Reset to off-screen when mouse leaves
+    mouseY = -1000;
+  });
 // Create gradient (horizontal)
 const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
 
 // Add color stops
-gradient.addColorStop(0, 'rgb(19, 20, 20)'); // Start with black
-gradient.addColorStop(0.2, 'rgb(0, 0, 0)'); // Start with black
+gradient.addColorStop(0, 'rgb(0, 0, 0)'); // Start with black
+gradient.addColorStop(0.2, 'rgb(20, 47, 32)'); // Start with black
 
-gradient.addColorStop(0.9, 'rgb(0, 0, 0)'); // Start with black
-gradient.addColorStop(1, 'rgb(27, 28, 24)'); // End with dark gray
+gradient.addColorStop(0.9, 'rgb(97, 88, 88)'); // Start with black
+gradient.addColorStop(1, 'rgb(112, 121, 149)'); // End with dark gray
 
 
 
@@ -40,8 +51,8 @@ function createOvalGradient() {
     );
     
     // Add color stops for the gradient
-    ovalGradient.addColorStop(0, 'rgba(7, 8, 8, 0.88)');  // Light grey center
-    ovalGradient.addColorStop(0.7, 'rgba(6, 2, 32, 0.07)');   // Mid grey
+    ovalGradient.addColorStop(0, 'rgba(129, 140, 150, 0.57)');  // Light grey center
+    ovalGradient.addColorStop(0.7, 'rgba(83, 82, 86, 0.23)');   // Mid grey
     ovalGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');         // Fade to transparent
 }
 
@@ -123,11 +134,11 @@ class Boid {
         this.position = new Vector(Math.random() * canvas.width, Math.random() * canvas.height);
         this.velocity = new Vector((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4);
         this.acceleration = new Vector();
-        this.maxSpeed = .01 + Math.random() * 0.2;
-        this.maxForce = 0.1;
+        this.maxSpeed = 9 + Math.random() * 0.2;
+        this.maxForce = 9;
         this.image = imageArray[Math.floor(Math.random() * imageArray.length)];
         this.radius = 1000;
-        this.scale = Math.random() * 0.1 + 0.15;
+        this.scale = Math.random() * 0.1 + 0.00005;
         
         // Add opacity property for fading
         this.opacity = 0; // Start fully transparent
@@ -163,7 +174,7 @@ class Boid {
     }
 
     align(boids) {
-        let perceptionRadius = 90;
+        let perceptionRadius = 900;
         let steering = new Vector();
         let total = 0;
         // Process only a subset of boids for performance
@@ -237,6 +248,23 @@ class Boid {
         return steering;
     }
 
+    avoidCursor() {
+        const avoidanceRadius = 10;
+        const mousePos = new Vector(mouseX, mouseY);
+        const distance = this.position.distance(mousePos);
+        
+        if (distance < avoidanceRadius) {
+            let steer = Vector.subtract(this.position, mousePos);
+            const distanceFactor = 1 - (distance / avoidanceRadius);
+            steer.normalize();
+            steer.multiply(this.maxSpeed * 200 * distanceFactor);
+            steer.subtract(this.velocity);
+            steer.limit(this.maxForce * 300);
+            return steer;
+        }
+        return new Vector();
+    }
+
     updateFade() {
         // Handle fading in or out
         if (this.fadeState === 'in' && this.opacity < 1) {
@@ -303,9 +331,12 @@ class Boid {
         let alignment = this.align(boids);
         let cohesion = this.cohesion(boids);
         let separation = this.separation(boids);
+        let cursorAvoidance = this.avoidCursor(); // Add new avoidance force
+        
         this.acceleration.add(alignment);
         this.acceleration.add(cohesion);
         this.acceleration.add(separation);
+        this.acceleration.add(cursorAvoidance); // Add to acceleration
     }
 }
 

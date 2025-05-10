@@ -1,16 +1,9 @@
 @font-face {
-    font-family: 'FoundersGrotesk';
-    src: url('TestFoundersGrotesk-Regular-BF66175e972ac1c.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
+    font-family: 'Micross';
+    src: url('micross.ttf') format('truetype');
+    
 }
 
-@font-face {
-    font-family: 'FoundersGrotesk';
-    src: url('TestFoundersGrotesk-Bold-BF66175e9700615.otf') format('opentype');
-    font-weight: bold;
-    font-style: normal;
-}
 
 body, html {
     font-family: 'FoundersGrotesk', sans-serif;
@@ -34,7 +27,6 @@ body, html {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.653) 50%, rgba(255, 0, 187, 0) 80%,  rgba(0, 0, 0, 0.618) 100%);
     pointer-events: none;
     z-index: 1;
 }
@@ -48,7 +40,8 @@ p {
 
 h3 {
     margin-bottom: 1px;
-    animation: rainbowtext 5s ease;  
+    animation: rainbowtext 5s ease;
+    font-weight: lighter;  
 
 }
 
@@ -71,7 +64,7 @@ h3 {
     margin-top: -2.2em;
     margin-bottom: -1rem;
     animation: slideIn 10s ease, rainbowtext 10s infinite alternate-reverse;  
-    color: white;
+    color: #DED7BE;
 
 }
 
@@ -80,7 +73,7 @@ h3 {
     line-height: 1.6;
     max-width: 600px;
     margin-bottom: 3rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: #DED7BE;
     position: relative;
     padding: 1rem;
 }
@@ -105,7 +98,7 @@ h3 {
     backdrop-filter: blur(1.5px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     text-decoration: none;
-    color: white;
+    color: #DED7BE;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
 
     animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
@@ -181,9 +174,8 @@ h3 {
     cursor: pointer;
     border: none;
     background-color: rgba(255, 255, 255, 0);
-    backdrop-filter: blur(1.5px);
 
-    color: #fff;
+    color: #DED7BE;
     padding: 8px 12px;
     z-index: 2001; /* Above navbar */
     border-radius: 5px;
@@ -195,29 +187,57 @@ h3 {
 }
 
 .navbar {
-    background-color: rgba(255, 255, 255, 0);
-    color: white;
     position: fixed;
-    width: 60%;
-    top: 10px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2000;
-    display: flex;
-    flex-direction: column; /* Change to column layout */
+    width: 60%;
     padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.5s ease;
-}
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth transitions */
+    z-index: 2000;
+  }
+
+  /* -------- Scrolled State -------- */
+.navbar.scrolled {
+    top: -220px; /* Adjust to control how much navbar scrolls up */
+  }
 
 .navbar-top {
-    display: flex;
+    display: column;
     justify-content: center; /* Center the home button */
     width: 100%;
     align-items: center;
 }
 
+/* Arrow navigation */
+.nav-arrow {
+    transform: scaleY(2);
+  transform-origin: 0 0;
+top: 30%;
+  font-weight: bolder;
+    position: fixed;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #DED7BE;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 9000;
+    transition: transform 0.3s ease;
+    padding: 10px 15px;
+}
 
+.nav-arrow:hover {
+    color: #ff0000;
+
+    
+}
+
+.prev-arrow {
+    left: -40px;
+}
+
+.next-arrow {
+    right: -40px;
+}
 
 .galleryshop-container {
     display: flex;
@@ -231,7 +251,7 @@ h3 {
 
 .galleryshop-button {
     text-decoration: none;
-    color: white;
+    color: #DED7BE;
     font-size: 1.0rem;
     border-radius: 5px;
     margin: -2px 5px;
@@ -253,16 +273,26 @@ h3 {
 }
 
 .home-button {
+    display: block;
+    width: 200px; /* Match logo width */
+    margin: 0 auto;
+    text-align: center;
     text-decoration: none;
-    color: white;
-    font-size: 1.8rem;
+    color: #DED7BE;
+    font-size: 3rem;
     cursor: pointer;
     transition: color 1.0s ease;
     animation: rainbowtext 3s ease;  
     letter-spacing: -0.05em;
+    font-weight: light;
+    transition: all 0.4s ease;
 
-    font-weight: bold;
 }
+
+.navbar.scrolled .home-button {
+    font-size: 2rem !important; /* Smaller text when scrolled */
+  }
+
 
 .home-button:hover {
     color: red;
@@ -278,7 +308,7 @@ h3 {
     left: 10px;
     background-color: rgba(0, 0, 0, 0.8); /* Darker background */
     backdrop-filter: blur(10px);
-    color: white;
+    color: #DED7BE;
     width: 250px; /* Fixed width for menu */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
     opacity: 0;
@@ -306,7 +336,7 @@ h3 {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: white;
+    color: #DED7BE;
 }
 
 .search-icon:hover {
@@ -326,7 +356,7 @@ h3 {
     border-radius: 5px;
     border: 1px solid #838383;
     background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: #DED7BE;
 }
 
 .dropdown-search-input::placeholder {
@@ -336,7 +366,6 @@ h3 {
 .menu-title {
     color: #838383;
     margin: 10px;
-    font-weight: bold;
 }
 
 .sort-options,
@@ -384,7 +413,7 @@ h3 {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Creates a responsive grid */
     gap: 10px;
     padding: 20px;
-    margin-top: 60px;
+    margin-top: 270px;
     max-width: 100vw;
     overflow: hidden;
 }
@@ -394,7 +423,7 @@ h3 {
 
     background-color: rgb(0 0 0 / 64%); 
     backdrop-filter: blur(1.5px);
-    color: white;
+    color: #DED7BE;
     border-radius: 5px;
     transition: scale 0.5s ease; /* Smooth scaling transition */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
@@ -413,7 +442,7 @@ scale: 1.03;
     right: 15px;
     font-size: 2rem;
     cursor: pointer;
-    color: white;
+    color: #DED7BE;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     z-index: 9000;
     transition: transform 0.3s ease;
@@ -498,6 +527,7 @@ scale: 1.03;
   
     display: block; /* Make sure the title is always visible */
     font-size: 1rem;
+    margin-bottom: -10px;
 }
 
 :root {
@@ -540,7 +570,7 @@ scale: 1.03;
     border: 1px solid rgba(255, 255, 255, 0.1);
 
     background-color: rgb(0 0 0 / 64%); 
-    color: white;
+    color: #DED7BE;
     position: relative; /* For absolute positioned arrows */
     padding: 1rem;
     border-radius: 5px;
@@ -587,7 +617,7 @@ scale: 1.03;
     align-items: center; /* Aligns items vertically */
     background-color: rgba(255, 255, 255, 0); /* Adjust color and opacity to match mockup */
     backdrop-filter: blur(1.5px);
-        color: white; /* Text color */
+        color: #DED7BE; /* Text color */
     border-radius: 5px; /* Rounded corners */
     overflow: hidden; /* Ensures content fits within the item */
 }
@@ -651,7 +681,7 @@ scale: 1.03;
     flex-direction: row;
     gap: 30px;
     align-items: flex-start;
-    max-width: 1200px;
+    max-width: 1100px;
     padding: 30px;
     
     position: relative;
@@ -687,7 +717,7 @@ scale: 1.03;
 .gallery-item-detail p {
     margin: 5px 0;
     font-size: 1rem;
-    color: #ffffff;
+    color: #DED7BE;
 }
 
 .gallery-item-detail h3 {
@@ -700,11 +730,11 @@ scale: 1.03;
 .gallery-item-detail h3::after {
     content: '';
     position: absolute;
-    bottom: -5px;
+    bottom: -2px;
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: #fff;
+    background-color: #DED7BE;
 animation: rainbow 5s ease;  
 } 
 
@@ -778,7 +808,7 @@ animation: rainbow 5s ease;
 }
 
 .thumbnail.active {
-    border-color: #ffffff; /* Highlight active thumbnail */
+    border-color: #DED7BE; /* Highlight active thumbnail */
 }
 
 .thumbnail:hover {
@@ -842,7 +872,7 @@ animation: rainbow 5s ease;
     }
     100% {
 
-        background-color: #ffffff;
+        background-color: #DED7BE;
 
     }
   }
@@ -884,7 +914,7 @@ animation: rainbow 5s ease;
     
     }
     100% {
-        color: #ffffff;
+        color: #DED7BE;
 
     }
 
@@ -941,6 +971,30 @@ paypal-cart-button {
     right: 10px;
     z-index: 5000;
 }
+
+/* Logo styling */
+.logo-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.logo-image {
+    width: 180px; /* Match home button width */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    transition: filter 0.5s ease;
+    transition: all 0.4s ease;
+  transform-origin: top;
+}
+
+.navbar.scrolled .logo-image {
+    transform: scale(0.5); /* Shrink logo */
+}
+
+
+/* Existing home button CSS (keep these properties) */
 
 .image-container {
     position: relative;
@@ -1013,7 +1067,7 @@ margin-bottom: 100px;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 5px;
         padding: 10px;
-        margin-top: 50px;
+        margin-top: 240px;
     }
 
     .gallery-item {

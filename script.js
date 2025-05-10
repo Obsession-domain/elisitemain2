@@ -5,6 +5,8 @@ let searchInput;
 let menuToggle;
 let dropdownMenu;
 let searchContainer;
+let currentDetailId = null;
+
 document.addEventListener('DOMContentLoaded', (event) => {
     galleryView = document.getElementById('gallery-view');
     menuToggle = document.getElementById('menu-toggle');
@@ -126,6 +128,8 @@ function setupEventListeners(dropdownSearch) {
     });
 }
 
+
+
 function loadGalleryItems(items, forceSmallView = false) {
     galleryView.innerHTML = '';
     const galleryContainer = document.createElement('div');
@@ -176,10 +180,17 @@ function createGalleryItem(item, isSmallView) {
 
 
 function loadGalleryItemDetails(id) {
+    currentDetailId = id;
     const item = currentItems.find(item => item.id.toString() === id);
+    const currentIndex = currentItems.findIndex(item => item.id.toString() === id);
+    
     galleryView.innerHTML = `
         <div class="gallery-item-detail">
-                    <a class="close-detail" href="index.html" style="text-decoration:none">×</a>
+            <a class="close-detail" href="index.html" style="text-decoration:none">×</a>
+            ${currentItems.length > 1 ? `
+                <div class="nav-arrow prev-arrow"><</div>
+                <div class="nav-arrow next-arrow">></div>
+            ` : ''}
             <div class="media-column">
                 <div class="main-media-container"></div>
                 <div class="thumbnails-container"></div>
@@ -190,9 +201,19 @@ function loadGalleryItemDetails(id) {
             </div>
         </div>
     `;
+
+    // Add arrow event listeners if multiple items
+    if(currentItems.length > 1) {
+        galleryView.querySelector('.prev-arrow').addEventListener('click', () => 
+            navigateGallery('prev', item.id));
+        galleryView.querySelector('.next-arrow').addEventListener('click', () => 
+            navigateGallery('next', item.id));
+    }
     galleryView.classList.add('detail-view-active');
 
     // Reference elements
+    const navbar = document.querySelector('.navbar');
+    navbar.classList.add('scrolled'); // Force collapse on detail view open
     const detailView = galleryView.querySelector('.gallery-item-detail');
     
     const mainMediaContainer = detailView.querySelector('.main-media-container');
@@ -206,6 +227,9 @@ function loadGalleryItemDetails(id) {
     const paypalAnchor = document.getElementById(`paypal-anchor-${item.id}`);
     let currentMediaIndex = 0;
 
+    // Force navbar collapse and scroll to top
+  navbar.classList.add('scrolled');
+  scrollToTop();
     
     if (window.matchMedia('(max-width: 767px)').matches) {
         setTimeout(() => {
@@ -218,6 +242,7 @@ function loadGalleryItemDetails(id) {
     galleryView.querySelector('.close-detail').addEventListener('click', () => {
         galleryView.classList.remove('detail-view-active');
         galleryView.innerHTML = '';
+        currentDetailId = null; // Clear current ID
     });
 
       
@@ -298,6 +323,8 @@ function loadGalleryItemDetails(id) {
 }
 
 function navigateGallery(direction, currentId) {
+    if (currentItems.length <= 1) return; // Don't navigate if only one item
+    
     let index = currentItems.findIndex(item => item.id.toString() === currentId);
     if (direction === 'prev') {
         index = index - 1 < 0 ? currentItems.length - 1 : index - 1;
@@ -354,6 +381,39 @@ document.querySelectorAll('.sort-option, .view-option').forEach(option => {
     });
 });
 
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+function handleKeyPress(event) {
+    if (!currentDetailId) return;
+    
+    switch(event.key) {
+        case 'ArrowLeft':
+            if(currentItems.length > 1) {
+                navigateGallery('prev', currentDetailId);
+                event.preventDefault();
+            }
+            break;
+        case 'ArrowRight':
+            if(currentItems.length > 1) {
+                navigateGallery('next', currentDetailId);
+                event.preventDefault();
+            }
+            break;
+        case 'Escape':
+            // Simulate clicking the close button
+            const closeButton = document.querySelector('.close-detail');
+            if(closeButton) {
+                closeButton.click();
+                event.preventDefault();
+            }
+            break;
+    }
+}
 
 function handleSortOptionClick(sortOption) {
     const value = sortOption.textContent;
@@ -380,4 +440,20 @@ function toggleGalleryView(viewSize = 'large') {
             loadGalleryItems(currentItems, viewSize === 'small');
         });
     });
+    document.addEventListener('keydown', handleKeyPress);
 
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.navbar');
+        const galleryView = document.getElementById('gallery-view');
+        const isDetailView = galleryView.classList.contains('detail-view-active');
+        
+        // Always keep collapsed in detail view
+        if (isDetailView) {
+          navbar.classList.add('scrolled');
+          return; // Exit early, no need for scroll position checks
+        }
+      
+        // Original scroll behavior for list view
+        const scrollY = window.scrollY || window.pageYOffset;
+        navbar.classList.toggle('scrolled', scrollY > 100);
+      });

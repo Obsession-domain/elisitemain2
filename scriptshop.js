@@ -5,6 +5,8 @@ let searchInput;
 let menuToggle;
 let dropdownMenu;
 let searchContainer;
+let currentDetailId = null;
+
 document.addEventListener('DOMContentLoaded', (event) => {
     galleryView = document.getElementById('gallery-view');
     menuToggle = document.getElementById('menu-toggle');
@@ -126,6 +128,8 @@ function setupEventListeners(dropdownSearch) {
     });
 }
 
+
+
 function loadGalleryItems(items, forceSmallView = false) {
     galleryView.innerHTML = '';
     const galleryContainer = document.createElement('div');
@@ -176,10 +180,17 @@ function createGalleryItem(item, isSmallView) {
 
 
 function loadGalleryItemDetails(id) {
+    currentDetailId = id;
     const item = currentItems.find(item => item.id.toString() === id);
+    const currentIndex = currentItems.findIndex(item => item.id.toString() === id);
+    
     galleryView.innerHTML = `
         <div class="gallery-item-detail">
-                    <a class="close-detail" href="shop.html" style="text-decoration:none">×</a>
+            <a class="close-detail" href="shop.html" style="text-decoration:none">×</a>
+            ${currentItems.length > 1 ? `
+                <div class="nav-arrow prev-arrow"><</div>
+                <div class="nav-arrow next-arrow">></div>
+            ` : ''}
             <div class="media-column">
                 <div class="main-media-container"></div>
                 <div class="thumbnails-container"></div>
@@ -190,6 +201,14 @@ function loadGalleryItemDetails(id) {
             </div>
         </div>
     `;
+
+    // Add arrow event listeners if multiple items
+    if(currentItems.length > 1) {
+        galleryView.querySelector('.prev-arrow').addEventListener('click', () => 
+            navigateGallery('prev', item.id));
+        galleryView.querySelector('.next-arrow').addEventListener('click', () => 
+            navigateGallery('next', item.id));
+    }
     galleryView.classList.add('detail-view-active');
 
     // Reference elements
@@ -218,6 +237,7 @@ function loadGalleryItemDetails(id) {
     galleryView.querySelector('.close-detail').addEventListener('click', () => {
         galleryView.classList.remove('detail-view-active');
         galleryView.innerHTML = '';
+        currentDetailId = null; // Clear current ID
     });
 
       
@@ -298,6 +318,8 @@ function loadGalleryItemDetails(id) {
 }
 
 function navigateGallery(direction, currentId) {
+    if (currentItems.length <= 1) return; // Don't navigate if only one item
+    
     let index = currentItems.findIndex(item => item.id.toString() === currentId);
     if (direction === 'prev') {
         index = index - 1 < 0 ? currentItems.length - 1 : index - 1;
@@ -354,6 +376,32 @@ document.querySelectorAll('.sort-option, .view-option').forEach(option => {
     });
 });
 
+function handleKeyPress(event) {
+    if (!currentDetailId) return;
+    
+    switch(event.key) {
+        case 'ArrowLeft':
+            if(currentItems.length > 1) {
+                navigateGallery('prev', currentDetailId);
+                event.preventDefault();
+            }
+            break;
+        case 'ArrowRight':
+            if(currentItems.length > 1) {
+                navigateGallery('next', currentDetailId);
+                event.preventDefault();
+            }
+            break;
+        case 'Escape':
+            // Simulate clicking the close button
+            const closeButton = document.querySelector('.close-detail');
+            if(closeButton) {
+                closeButton.click();
+                event.preventDefault();
+            }
+            break;
+    }
+}
 
 function handleSortOptionClick(sortOption) {
     const value = sortOption.textContent;
@@ -380,4 +428,4 @@ function toggleGalleryView(viewSize = 'large') {
             loadGalleryItems(currentItems, viewSize === 'small');
         });
     });
-
+    document.addEventListener('keydown', handleKeyPress);
