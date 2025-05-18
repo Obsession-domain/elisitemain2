@@ -4,6 +4,10 @@
     
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 
 body, html {
     font-family: 'FoundersGrotesk', sans-serif;
@@ -57,15 +61,12 @@ h3 {
     text-align: center;
 }
 
-.about-title {
-    line-height: 0.8em;
-    font-size: 8rem;
-    letter-spacing: -0.05em;
-    margin-top: -2.2em;
-    margin-bottom: -1rem;
-    animation: slideIn 10s ease, rainbowtext 10s infinite alternate-reverse;  
-    color: #DED7BE;
-
+.about-logo {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    margin: 1rem;
+    animation: slideIn 5s ease;
 }
 
 .about-description {
@@ -76,6 +77,7 @@ h3 {
     color: #DED7BE;
     position: relative;
     padding: 1rem;
+    line-height: 1rem;
 }
 
 
@@ -135,10 +137,11 @@ h3 {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .about-title {
-        font-size: 9rem;
-        margin-top: -10em;
+    .about-logo {
+        max-width: 400px;
     }
+
+
     
     .about-description {
         font-size: 1rem;
@@ -151,9 +154,11 @@ h3 {
 }
 
 @media (max-width: 480px) {
-    .about-title {
-        font-size: 2.2rem;
+    .about-logo {
+        max-width: 300px;
     }
+
+
     
     .about-section {
         margin-top: 60px;
@@ -252,7 +257,7 @@ top: 30%;
 .galleryshop-button {
     text-decoration: none;
     color: #DED7BE;
-    font-size: 1.0rem;
+    font-size: 1.2rem;
     border-radius: 5px;
     margin: -2px 5px;
     transition: color 5.0s ease-in-out;
@@ -276,13 +281,13 @@ top: 30%;
     display: block;
     width: 200px; /* Match logo width */
     margin: 0 auto;
+    margin-bottom: 10px;
     text-align: center;
     text-decoration: none;
     color: #DED7BE;
     font-size: 3rem;
     cursor: pointer;
     transition: color 1.0s ease;
-    animation: rainbowtext 3s ease;  
     letter-spacing: -0.05em;
     font-weight: light;
     transition: all 0.4s ease;
@@ -291,7 +296,7 @@ top: 30%;
 
 .navbar.scrolled .home-button {
     font-size: 2rem !important; /* Smaller text when scrolled */
-  }
+ }
 
 
 .home-button:hover {
@@ -411,11 +416,15 @@ top: 30%;
 .gallery-view {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Creates a responsive grid */
-    gap: 10px;
-    padding: 20px;
+    gap: 40px;
+    padding: 40px;
     margin-top: 270px;
     max-width: 100vw;
     overflow: hidden;
+}
+
+.gallery-view.detail-view-active {
+    margin-top: 50px !important; /* Reduced margin for detail view */
 }
 
 .gallery-item {
@@ -581,8 +590,8 @@ scale: 1.03;
 /* Large View */
 .gallery-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust the minmax values for your preferred size */
-    grid-gap: 5px; /* Space between items */
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); /* Adjust the minmax values for your preferred size */
+    grid-gap: 8px; /* Space between items */
 
 }
 
@@ -987,6 +996,7 @@ paypal-cart-button {
     transition: filter 0.5s ease;
     transition: all 0.4s ease;
   transform-origin: top;
+
 }
 
 .navbar.scrolled .logo-image {
@@ -1059,7 +1069,7 @@ margin-bottom: 100px;
     }
 
     .galleryshop-button {
-        font-size: 0.9rem;
+        font-size: 1.2rem;
         margin: 0 3px;
     }
 
@@ -1067,7 +1077,7 @@ margin-bottom: 100px;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 5px;
         padding: 10px;
-        margin-top: 240px;
+        margin-top: 270px;
     }
 
     .gallery-item {
@@ -1135,7 +1145,7 @@ paypal-cart-button {
     }
 
     .galleryshop-button {
-        font-size: 0.8rem;
+        font-size: 1.2rem;
     }
 
     .gallery-item {

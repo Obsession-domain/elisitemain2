@@ -3,53 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBSESSION DOMAIN</title>
+    <title>OSIPOD</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://www.paypal.com/sdk/js?client-id=BAAlQGH9RyTmi2dYIavPsMU0mivuGx_THo4oBImEIHVnyT-RcSmLBxJ2w0NZ97wXchpHS_tJMMFKkrZJac&components=hosted-buttons,cart&enable-funding=venmo&currency=USD"></script>
-    <script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="Q9K8ADUD9H9FQ"></script>
-    <script src="scriptshop.js"></script>
-
-
+    <script src="https://www.paypal.com/sdk/js?client-id=BAAlQGH9RyTmi2dYIavPsMU0mivuGx_THo4oBImEIHVnyT-RcSmLBxJ2w0NZ97wXchpHS_tJMMFKkrZJac&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
 </head>
 <body>
-
     <div id="background">
         <canvas id="boidsCanvas"></canvas>
     </div>
-    <script>
-        cartPaypal.Cart({ id: "pp-view-cart" })
-      </script>
-              <paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
-
     <!-- Navigation Bar -->
      <!-- Menu Toggle Button Outside Navbar -->
     <button id="menu-toggle" class="menu-toggle">
         🔍
     </button>
-    
-</div>
-
-
    
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-    
-        <div class="navbar-top">
-            <!-- Home Button -->
-            <a href="./" id="home-button" class="home-button">OSIPOD</a>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-top">
+        <!-- Logo Container -->
+        <div class="logo-container">
+            <img src="OSIPODLOGO.png" class="logo-image">
         </div>
+        
+        <!-- Home Button -->
+        <a href="./" id="home-button" class="home-button">OSIPOD</a>
     </div>
+    
     <div class="galleryshop-container">
-    
         <a href="./" class="galleryshop-button";>Gallery</a>
-    ·
-        <a href="./shop.html" class="galleryshop-button" style="color: red;">Shop</a>
-    ·
+        <a style="color: #ded7be;">·</a>
+        <a href="./shop.html" class="galleryshop-button";  style="color: red;" >Shop</a>
+        <a style="color: #ded7be;">·</a>
         <a href="./about.html" class="galleryshop-button">Contact</a>
-    
     </div>
-    </nav>
-
+</nav>
     <!-- Dropdown Menu for Sorting and Viewing Options -->
     <div class="dropdown-menu" id="dropdown-menu">
     
@@ -70,9 +61,12 @@
         </div>
         
     </main>
-   
-   
-    <script src="boid.js"> </script>
+    <script src="scriptshop.js"></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js
+    "></script>
+        <script src="boid.js"> </script>
+
 
     </body>
 

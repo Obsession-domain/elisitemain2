@@ -220,10 +220,7 @@ function loadGalleryItemDetails(id) {
     const thumbnailsContainer = detailView.querySelector('.thumbnails-container');
     const mediaDetails = detailView.querySelector('.media-details');
 
-    const scrollPos = window.scrollY;
-    document.documentElement.style.scrollBehavior = 'auto';
-    
-
+   
     const paypalAnchor = document.getElementById(`paypal-anchor-${item.id}`);
     let currentMediaIndex = 0;
 
@@ -231,18 +228,13 @@ function loadGalleryItemDetails(id) {
   navbar.classList.add('scrolled');
   scrollToTop();
     
-    if (window.matchMedia('(max-width: 767px)').matches) {
-        setTimeout(() => {
-            window.scrollTo(0, 0);
-            detailView.scrollIntoView({ behavior: 'auto', block: 'start' });
-        }, 50); // Short delay for rendering
-    }
-
+   
     // Close handler - remove class
     galleryView.querySelector('.close-detail').addEventListener('click', () => {
         galleryView.classList.remove('detail-view-active');
         galleryView.innerHTML = '';
         currentDetailId = null; // Clear current ID
+        document.querySelector('.navbar').classList.remove('scrolled');
     });
 
       
@@ -449,11 +441,12 @@ function toggleGalleryView(viewSize = 'large') {
         
         // Always keep collapsed in detail view
         if (isDetailView) {
-          navbar.classList.add('scrolled');
-          return; // Exit early, no need for scroll position checks
+            navbar.classList.add('scrolled');
+            return;
         }
-      
+        
         // Original scroll behavior for list view
         const scrollY = window.scrollY || window.pageYOffset;
-        navbar.classList.toggle('scrolled', scrollY > 100);
-      });
+        navbar.classList.toggle('scrolled', scrollY > 50);
+    });
+    

@@ -212,32 +212,29 @@ function loadGalleryItemDetails(id) {
     galleryView.classList.add('detail-view-active');
 
     // Reference elements
+    const navbar = document.querySelector('.navbar');
+    navbar.classList.add('scrolled'); // Force collapse on detail view open
     const detailView = galleryView.querySelector('.gallery-item-detail');
     
     const mainMediaContainer = detailView.querySelector('.main-media-container');
     const thumbnailsContainer = detailView.querySelector('.thumbnails-container');
     const mediaDetails = detailView.querySelector('.media-details');
 
-    const scrollPos = window.scrollY;
-    document.documentElement.style.scrollBehavior = 'auto';
-    
-
+   
     const paypalAnchor = document.getElementById(`paypal-anchor-${item.id}`);
     let currentMediaIndex = 0;
 
+    // Force navbar collapse and scroll to top
+  navbar.classList.add('scrolled');
+  scrollToTop();
     
-    if (window.matchMedia('(max-width: 767px)').matches) {
-        setTimeout(() => {
-            window.scrollTo(0, 0);
-            detailView.scrollIntoView({ behavior: 'auto', block: 'start' });
-        }, 50); // Short delay for rendering
-    }
-
+   
     // Close handler - remove class
     galleryView.querySelector('.close-detail').addEventListener('click', () => {
         galleryView.classList.remove('detail-view-active');
         galleryView.innerHTML = '';
         currentDetailId = null; // Clear current ID
+        document.querySelector('.navbar').classList.remove('scrolled');
     });
 
       
@@ -376,6 +373,13 @@ document.querySelectorAll('.sort-option, .view-option').forEach(option => {
     });
 });
 
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
 function handleKeyPress(event) {
     if (!currentDetailId) return;
     
@@ -429,3 +433,20 @@ function toggleGalleryView(viewSize = 'large') {
         });
     });
     document.addEventListener('keydown', handleKeyPress);
+
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.navbar');
+        const galleryView = document.getElementById('gallery-view');
+        const isDetailView = galleryView.classList.contains('detail-view-active');
+        
+        // Always keep collapsed in detail view
+        if (isDetailView) {
+            navbar.classList.add('scrolled');
+            return;
+        }
+        
+        // Original scroll behavior for list view
+        const scrollY = window.scrollY || window.pageYOffset;
+        navbar.classList.toggle('scrolled', scrollY > 50);
+    });
+    
