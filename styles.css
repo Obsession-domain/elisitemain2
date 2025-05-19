@@ -173,18 +173,26 @@ h3 {
 /* Moved menu toggle outside navbar */
 .menu-toggle {
     position: fixed;
-    top: 10px;
-    left: 10px;
+    top: 20px;
+    left: 20px;
     font-size: 1.2rem;
     cursor: pointer;
     border: none;
     background-color: rgba(255, 255, 255, 0);
-
-    color: #DED7BE;
+    background-image: url('SearchButton.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 40px; /* Match your image's aspect ratio */
+    height: 40px;
+    /* Hide text if using a font icon previously */
+    text-indent: -9999px;
+    color: transparent;
     padding: 8px 12px;
     z-index: 2001; /* Above navbar */
     border-radius: 5px;
-    transition: color 0.4s ease, background-color 0.4s ease;
+    -webkit-filter: drop-shadow(0px 0px 2px #000000);
+    filter: drop-shadow(0px 0px 2px #000000);
 }
 
 .menu-toggle:hover {
@@ -204,8 +212,13 @@ h3 {
 
   /* -------- Scrolled State -------- */
 .navbar.scrolled {
-    top: -220px; /* Adjust to control how much navbar scrolls up */
+    top: -220px; /* Adjust to control how much navbar scrolls up */'
   }
+  
+  .navbar.scrolled .galleryshop-button {
+    margin-top: 5px;
+    font-size: 1.5rem !important; /* Smaller text when scrolled */
+ }
 
 .navbar-top {
     display: column;
@@ -216,22 +229,31 @@ h3 {
 
 /* Arrow navigation */
 .nav-arrow {
-    transform: scaleY(2);
-  transform-origin: 0 0;
-top: 30%;
+   
+    top: 40%;
   font-weight: bolder;
     position: fixed;
     font-size: 1.5rem;
     cursor: pointer;
-    color: #DED7BE;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     z-index: 9000;
     transition: transform 0.3s ease;
-    padding: 10px 15px;
+    width: 30px;
+    height: 30px;
+
+    -webkit-filter: drop-shadow(0px 0px 2px #000000);
+    filter: drop-shadow(0px 0px 2px #000000);
+}
+
+.arrow-icon {
+    width: 40px;
+    height: 40px;
+    pointer-events: none; /* Make image click-through */
+    
+    
 }
 
 .nav-arrow:hover {
-    color: #ff0000;
+    transform: scale(1.2);
 
     
 }
@@ -341,12 +363,13 @@ top: 30%;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #DED7BE;
+    
+    text-indent: -9999px;
+    color: transparent;
 }
 
-.search-icon:hover {
-    color: red;
-}
+
+
 /* Added styles for the dropdown search */
 .dropdown-search-container {
     margin-top: 20px;
@@ -445,22 +468,33 @@ top: 30%;
 scale: 1.03;
 }
 
+
+
 .close-detail {
     position: absolute;
     top: 15px;
-    right: 15px;
-    font-size: 2rem;
+    right: 20px;
     cursor: pointer;
     color: #DED7BE;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     z-index: 9000;
     transition: transform 0.3s ease;
+    padding: 5px; /* Adjust if needed */
+    width: 35px;
+    height: 35px;
+
     
+}
+
+.close-icon {
+    width: 35px;
+    height: 35px;
+    pointer-events: none; /* Make image click-through */
+    transition: transform 0.3s ease;
 }
 
 .close-detail:hover {
     transform: scale(1.2);
-    color: #ff0000;
 }
 
   
@@ -590,9 +624,13 @@ scale: 1.03;
 /* Large View */
 .gallery-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); /* Adjust the minmax values for your preferred size */
-    grid-gap: 8px; /* Space between items */
+    grid-gap: 15px; /* Space between items */
 
+}
+.gallery-view.large .gallery-container {
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+    max-width: 1200px; /* Optional: constrain maximum width */
+    margin: 0 auto; /* Center the grid */
 }
 
 
@@ -688,10 +726,10 @@ scale: 1.03;
 .gallery-item-detail {
     display: flex;
     flex-direction: row;
-    gap: 30px;
+    gap: 15px;
     align-items: flex-start;
-    max-width: 1100px;
-    padding: 30px;
+    max-width: 1500px;
+    padding: 10px;
     
     position: relative;
     text-align: center;
@@ -703,9 +741,11 @@ scale: 1.03;
 }
 
 .media-column {
-    flex: 1;
-    min-width: 50%;
+    flex: 2; /* Give more space to media column */
+    min-width: 70%;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .media-column {
@@ -717,11 +757,9 @@ scale: 1.03;
 .main-media-container {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* Creates 1:1 aspect ratio (adjust for different ratios) */
     background: #00000056;
     border-radius: 5px;
     overflow: hidden;
-
 }
 .gallery-item-detail p {
     margin: 5px 0;
@@ -750,7 +788,6 @@ animation: rainbow 5s ease;
 
 
 .gallery-item-detail img {
-    margin: 3px; /* Add margin around each image */
     box-sizing: border-box; /* Ensure padding doesn't add to the total size */
     border-radius: 5px; /* Match the existing border-radius style */
 }
@@ -758,8 +795,7 @@ animation: rainbow 5s ease;
 .gallery-item-detail img {
     width: 100%;        /* Scale to container width */
     height: auto;       /* Maintain aspect ratio */
-    max-width: 500px;   /* Limit maximum width */
-    max-height: 500px;  /* Optional: Limit maximum height */
+    
     object-fit: contain; /* Ensure images fit within bounds without distortion */
     display: block;     /* Remove extra spacing */
     border-radius: 5px; /* Consistent rounded corners */
@@ -768,18 +804,16 @@ animation: rainbow 5s ease;
 
 .gallery-detail-image,
 .gallery-detail-media {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Preserve full image without cropping */
-    animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-    max-width: 100%;
+    position: relative; /* Change from absolute */
+    top: auto;
+    left: auto;
     width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
     margin: 0 auto;
     display: block;
-
 }
 
 .media-details {
@@ -969,16 +1003,11 @@ paypal-add-to-cart-button {
 }
 
 paypal-cart-button {
-    position: fixed;
-   
-    background: #ffd50000;
-    padding: 8px 15px;
-    border-radius: 5px;
-
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 5000;
+    position: fixed !important;
+    top: 15px !important;
+    right: 15px !important;
+    z-index: 9999 !important; /* Higher than navbar/menu */
+    transform: none !important; /* Override mobile scaling */
 }
 
 /* Logo styling */
@@ -1027,6 +1056,7 @@ paypal-cart-button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    border-radius: 5px;
 }
 
 /* Existing hover rules remain the same */
@@ -1073,11 +1103,10 @@ margin-bottom: 100px;
         margin: 0 3px;
     }
 
-    .gallery-view {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 5px;
-        padding: 10px;
-        margin-top: 270px;
+    .gallery-view.large .gallery-container {
+        grid-template-columns: repeat(2, minmax(200px, 1fr));
+        max-width: 1200px; /* Optional: constrain maximum width */
+        margin: 0 auto; /* Center the grid */
     }
 
     .gallery-item {
@@ -1102,7 +1131,7 @@ margin-bottom: 100px;
     .gallery-item-detail {
         flex-direction: column;
         padding: 10px;
-        gap: 15px;
+        gap: 1px;
     }
 
     .media-column {
@@ -1131,8 +1160,10 @@ paypal-cart-button {
         display: none !important;
     }
     
-    .gallery-view {
-        grid-template-columns: 1fr;
+    .gallery-view.large .gallery-container {
+        grid-template-columns: repeat(1, minmax(200px, 1fr));
+        max-width: 1200px; /* Optional: constrain maximum width */
+        margin: 0 auto; /* Center the grid */
     }
 
     .navbar {
@@ -1164,6 +1195,7 @@ paypal-cart-button {
 
     .media-details h3 {
         font-size: 1.5rem;
+        margin-top: auto;
     }
 
     .media-details p {

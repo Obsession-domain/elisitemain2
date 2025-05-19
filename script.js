@@ -186,11 +186,17 @@ function loadGalleryItemDetails(id) {
     
     galleryView.innerHTML = `
         <div class="gallery-item-detail">
-            <a class="close-detail" href="index.html" style="text-decoration:none">×</a>
-            ${currentItems.length > 1 ? `
-                <div class="nav-arrow prev-arrow"><</div>
-                <div class="nav-arrow next-arrow">></div>
-            ` : ''}
+            <a class="close-detail" href="index.html" style="text-decoration:none">
+    <img src="exitbutton.png" class="close-icon" alt="Close">
+</a>
+${currentItems.length > 1 ? `
+    <div class="nav-arrow prev-arrow">
+        <img src="LeftButton.png" class="arrow-icon" alt="Previous">
+    </div>
+    <div class="nav-arrow next-arrow">
+        <img src="RightButton.png" class="arrow-icon" alt="Next">
+    </div>
+` : ''}
             <div class="media-column">
                 <div class="main-media-container"></div>
                 <div class="thumbnails-container"></div>

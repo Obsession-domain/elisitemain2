@@ -248,6 +248,7 @@ function loadGalleryItemDetails(id) {
         cartPaypal.AddToCart({ id: item.paypalButtonId });
 
 
+
         
     }
 

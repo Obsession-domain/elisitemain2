@@ -6,6 +6,7 @@
     <title>OSIPOD</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://www.paypal.com/sdk/js?client-id=BAAlQGH9RyTmi2dYIavPsMU0mivuGx_THo4oBImEIHVnyT-RcSmLBxJ2w0NZ97wXchpHS_tJMMFKkrZJac&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
+    <script src="https://www.paypalobjects.com/ncp/cart/cart.js" data-merchant-id="Q9K8ADUD9H9FQ"></script>
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -15,11 +16,13 @@
     <div id="background">
         <canvas id="boidsCanvas"></canvas>
     </div>
+    
     <!-- Navigation Bar -->
      <!-- Menu Toggle Button Outside Navbar -->
     <button id="menu-toggle" class="menu-toggle">
         🔍
     </button>
+   
    
   <!-- Navigation Bar -->
   <nav class="navbar">
@@ -32,6 +35,7 @@
         <!-- Home Button -->
         <a href="./" id="home-button" class="home-button">OSIPOD</a>
     </div>
+ 
     
     <div class="galleryshop-container">
         <a href="./" class="galleryshop-button";>Gallery</a>
@@ -66,7 +70,10 @@
     https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js
     "></script>
         <script src="boid.js"> </script>
-
+        <paypal-cart-button data-id="pp-view-cart"></paypal-cart-button>
+        <script>
+          cartPaypal.Cart({ id: "pp-view-cart" })
+        </script>
 
     </body>
 
