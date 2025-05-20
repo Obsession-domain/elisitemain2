@@ -95,9 +95,9 @@ h3 {
     align-items: center;
     gap: 0.5rem;
     padding: 1rem;
-    background-color: rgb(0 0 0 / 64%); 
+    background-color: rgba(255, 255, 255, 0.042); 
     border-radius: 5px;
-    backdrop-filter: blur(1.5px);
+    backdrop-filter: blur(6px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     text-decoration: none;
     color: #DED7BE;
@@ -333,8 +333,8 @@ h3 {
     line-height: 1px;
     top: 10px; /* Adjusted positioning */
     left: 10px;
-    background-color: rgba(0, 0, 0, 0.8); /* Darker background */
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.042); 
+    backdrop-filter: blur(6px);
     color: #DED7BE;
     width: 250px; /* Fixed width for menu */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
@@ -453,8 +453,8 @@ h3 {
 .gallery-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
 
-    background-color: rgb(0 0 0 / 64%); 
-    backdrop-filter: blur(1.5px);
+    background-color: rgba(255, 255, 255, 0.042); 
+    backdrop-filter: blur(6px);
     color: #DED7BE;
     border-radius: 5px;
     transition: scale 0.5s ease; /* Smooth scaling transition */
@@ -532,7 +532,7 @@ scale: 1.03;
     width: 100%; /* Full width */
     padding: 10px;
     background-color: rgba(255, 255, 255, 0.1); /* Adjust color and opacity to match mockup */
-    backdrop-filter: blur(1.5px);
+    backdrop-filter: blur(10px);
     border-radius: 5px;
     overflow: hidden;
 }
@@ -612,7 +612,7 @@ scale: 1.03;
 .gallery-item-detail {
     border: 1px solid rgba(255, 255, 255, 0.1);
 
-    background-color: rgb(0 0 0 / 64%); 
+    background-color: rgba(255, 255, 255, 0.042); 
     color: #DED7BE;
     position: relative; /* For absolute positioned arrows */
     padding: 1rem;
@@ -662,8 +662,8 @@ scale: 1.03;
 .gallery-view.small .gallery-item {
     display: flex; /* Use flexbox for layout */
     align-items: center; /* Aligns items vertically */
-    background-color: rgba(255, 255, 255, 0); /* Adjust color and opacity to match mockup */
-    backdrop-filter: blur(1.5px);
+    background-color: rgba(255, 255, 255, 0.057); /* Adjust color and opacity to match mockup */
+    backdrop-filter: blur(6px);
         color: #DED7BE; /* Text color */
     border-radius: 5px; /* Rounded corners */
     overflow: hidden; /* Ensures content fits within the item */
@@ -733,8 +733,8 @@ scale: 1.03;
     
     position: relative;
     text-align: center;
-    background-color: rgb(0 0 0 / 64%); 
-    backdrop-filter: blur(1.5px);
+    background-color: rgba(255, 255, 255, 0.042); 
+    backdrop-filter: blur(6px);
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
     margin: auto;
@@ -757,7 +757,7 @@ scale: 1.03;
 .main-media-container {
     position: relative;
     width: 100%;
-    background: #00000056;
+    background: #00000000;
     border-radius: 5px;
     overflow: hidden;
 }
