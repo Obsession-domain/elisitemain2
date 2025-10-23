@@ -59,6 +59,8 @@ h3 {
     padding: 2rem;
     margin-top: 80px;
     text-align: center;
+    animation: slideIn 2s ease;
+
 }
 
 .about-logo {
@@ -77,7 +79,7 @@ h3 {
     color: #DED7BE;
     position: relative;
     padding: 1rem;
-    line-height: 1rem;
+    line-height: 1.4rem;
 }
 
 
@@ -212,7 +214,7 @@ h3 {
 
   /* -------- Scrolled State -------- */
 .navbar.scrolled {
-    top: -220px; /* Adjust to control how much navbar scrolls up */'
+    top: -220px; /* Adjust to control how much navbar scrolls up */
   }
   
   .navbar.scrolled .galleryshop-button {
@@ -275,6 +277,15 @@ h3 {
     left: 0;
     top: 0;
 }
+.galleryshop-container-sub {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    width: 100%;
+    position: relative;
+    transform: none;
+    left: 0;
+    top: 0;
+}
 
 .galleryshop-button {
     text-decoration: none;
@@ -287,11 +298,82 @@ h3 {
 
 }
 
-.galleryshop-button:hover {
-    transition: color 1.0s ease-in-out;
-    color: red;
+.galleryshop-button-sub {
+    text-decoration: none;
+    color: #DED7BE;
+    font-size: 1rem;
+    border-radius: 5px;
+    margin: 3px 5px;
+    transition: color 5.0s ease-in-out;
+    
 
 }
+
+.galleryshop-button:hover {
+    animation: glow 1s forwards; /* Animation properties */
+
+}
+.galleryshop-button-sub:hover {
+    animation: glow 1s forwards; /* Animation properties */
+
+}
+
+@keyframes glow {
+    0% {
+        text-shadow:
+          0 0 1px rgba(255, 255, 255, 0),
+          0 0 1px rgba(255, 249, 232, 0),
+          0 0 1px rgba(255, 255, 255, 0),
+          0 0 1px rgba(246, 238, 222, 0);
+      }
+    
+    20% {
+      text-shadow:
+        0 0 5px rgb(255, 255, 255),
+        0 0 10px rgb(255, 249, 232),
+        0 0 20px rgb(255, 255, 255),
+        0 0 40px rgb(246, 238, 222);
+    }
+    100% {
+      text-shadow:
+        0 0 14px rgba(212, 193, 136, 0.166),
+        0 0 14px rgba(225, 213, 173, 0.899),
+        0 0 30px rgba(172, 162, 127, 0.72),
+        0 0 80px rgba(182, 167, 107, 0.739); /* Larger blur radii for the "to" state */
+    }
+  }
+
+  @keyframes glow2 {
+    0% {
+        text-shadow:
+          0 0 1px rgba(255, 255, 255, 0),
+          0 0 1px rgba(255, 249, 232, 0),
+          0 0 1px rgba(255, 255, 255, 0),
+          0 0 1px rgba(246, 238, 222, 0);
+      }
+    
+    20% {
+      text-shadow:
+        0 0 5px rgb(255, 255, 255),
+        0 0 10px rgb(255, 249, 232),
+        0 0 20px rgb(255, 255, 255),
+        0 0 40px rgb(246, 238, 222);
+    }
+    50% {
+      text-shadow:
+        0 0 14px rgba(212, 193, 136, 0.166),
+        0 0 14px rgba(225, 213, 173, 0.899),
+        0 0 30px rgba(172, 162, 127, 0.72),
+        0 0 80px rgba(182, 167, 107, 0.739); /* Larger blur radii for the "to" state */
+    }
+    100% {
+        text-shadow:
+          0 0 1px rgba(255, 255, 255, 0),
+          0 0 1px rgba(255, 249, 232, 0),
+          0 0 1px rgba(255, 255, 255, 0),
+          0 0 1px rgba(246, 238, 222, 0);
+      }
+  }
 
 .container {
     max-width: 10vw;
@@ -322,7 +404,7 @@ h3 {
 
 
 .home-button:hover {
-    color: red;
+    animation: glow2 3s forwards; /* Animation properties */
 }
 
 /* Removed search toggle container styles */
@@ -367,6 +449,10 @@ h3 {
     text-indent: -9999px;
     color: transparent;
 }
+
+
+
+
 
 
 
@@ -448,6 +534,7 @@ h3 {
 
 .gallery-view.detail-view-active {
     margin-top: 50px !important; /* Reduced margin for detail view */
+    margin: 50px;
 }
 
 .gallery-item {
@@ -624,7 +711,7 @@ scale: 1.03;
 /* Large View */
 .gallery-container {
     display: grid;
-    grid-gap: 15px; /* Space between items */
+    grid-gap: 10px; /* Space between items */
 
 }
 .gallery-view.large .gallery-container {
@@ -761,6 +848,12 @@ scale: 1.03;
     border-radius: 5px;
     overflow: hidden;
 }
+
+.gallery-item-detail {
+    animation: slideIn 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+
+}
+
 .gallery-item-detail p {
     margin: 5px 0;
     font-size: 1rem;
@@ -789,7 +882,6 @@ animation: rainbow 5s ease;
 
 .gallery-item-detail img {
     box-sizing: border-box; /* Ensure padding doesn't add to the total size */
-    border-radius: 5px; /* Match the existing border-radius style */
 }
 .gallery-detail-image, 
 .gallery-item-detail img {
@@ -798,7 +890,6 @@ animation: rainbow 5s ease;
     
     object-fit: contain; /* Ensure images fit within bounds without distortion */
     display: block;     /* Remove extra spacing */
-    border-radius: 5px; /* Consistent rounded corners */
     box-sizing: border-box;
 }
 
@@ -812,15 +903,15 @@ animation: rainbow 5s ease;
     max-width: 100%;
     max-height: 80vh;
     object-fit: contain;
-    margin: 0 auto;
+    margin: 0, auto;
     display: block;
 }
 
 .media-details {
     order: 0;
-    margin: 0;
     text-align: left;
     animation: slideIn 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    width: 80%;
 
 }
 
@@ -1126,7 +1217,12 @@ margin-bottom: 100px;
         padding: 5px 8px;
     }
 
-    
+    .menu-toggle:hover {
+        transform: scale(1.2);
+
+    }
+
+
 
     .gallery-item-detail {
         flex-direction: column;

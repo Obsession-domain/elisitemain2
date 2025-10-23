@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "title": "Jelly",
+    "year": 2024,
+    "medium": "Digital Drawing",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "media": [
+      {
+        "type": "image",
+        "url": "https://live.staticflickr.com/65535/54526816635_f10ea7d58c_b.jpg"
+      },
+      {
+        "type": "image",
+        "url": "https://live.staticflickr.com/65535/54526713998_f46f6c4347_b.jpg"
+      },
+      {
+        "type": "image",
+        "url": "https://live.staticflickr.com/65535/54526477561_ccae9c1dc8_b.jpg"
+      },
+      {
+        "type": "image",
+        "url": "https://live.staticflickr.com/65535/54526477591_1fa6098cb3_b.jpg"
+      }
+
+    ]
+
+   }   
+]
