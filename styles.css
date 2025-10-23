@@ -1176,6 +1176,11 @@ paypal-cart-button {
         display: none !important;
     }
     
+
+    .gallery-view.detail-view-active {
+        margin-top: 50px !important; /* Reduced margin for detail view */
+        margin: 0px;
+    }
     .paypal-detail-container {
 margin-bottom: 100px;
     }
@@ -1201,7 +1206,7 @@ margin-bottom: 100px;
     }
 
     .gallery-item {
-        margin: 5px;
+        margin: 0px;
     }
 
     .gallery-item:hover {
@@ -1226,7 +1231,7 @@ margin-bottom: 100px;
 
     .gallery-item-detail {
         flex-direction: column;
-        padding: 10px;
+        padding: 5px;
         gap: 1px;
     }
 
@@ -1257,7 +1262,7 @@ paypal-cart-button {
     }
     
     .gallery-view.large .gallery-container {
-        grid-template-columns: repeat(1, minmax(200px, 1fr));
+        grid-template-columns: repeat(2, minmax(100px, 1fr));
         max-width: 1200px; /* Optional: constrain maximum width */
         margin: 0 auto; /* Center the grid */
     }
@@ -1276,7 +1281,7 @@ paypal-cart-button {
     }
 
     .gallery-item {
-        margin: 2px;
+        margin: 0px;
     }
 
     .image-container {
