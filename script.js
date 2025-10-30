@@ -44,7 +44,8 @@ function loadGalleryItemsFromJSON() {
                 searchInput.style.display = 'none';
             }
         });
-    
+        window.addEventListener('resize', forceCenterDetailView);
+
         menuToggle.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
         searchIcon.addEventListener('click', () => toggleSearchDisplay(searchInput));
         document.querySelectorAll('.sort-option, .view-option').forEach(option => {
@@ -190,22 +191,28 @@ function loadGalleryItemDetails(id) {
     <img src="exitbutton.png" class="close-icon" alt="Close">
 </a>
 ${currentItems.length > 1 ? `
-    <div class="nav-arrow prev-arrow">
-        <img src="LeftButton.png" class="arrow-icon" alt="Previous">
-    </div>
-    <div class="nav-arrow next-arrow">
-        <img src="RightButton.png" class="arrow-icon" alt="Next">
-    </div>
+    
 ` : ''}
             <div class="media-column">
                 <div class="main-media-container"></div>
+                
                 <div class="thumbnails-container"></div>
+               
+               <div class="arrowholder"><div class="nav-arrow prev-arrow">
+        <img src="LeftButton.png" class="arrow-icon" alt="Previous">
+    </div>
+     <div class="nav-arrow next-arrow">
+        <img src="RightButton.png" class="arrow-icon" alt="Next">
+    </div>
+    </div> 
             </div>
             <div class="details-column">
                 <div class="media-details"></div>
                 <div id="paypal-anchor-${item.id}" class="paypal-container"></div>
-            </div>
-        </div>
+                
+                </div>
+       
+                </div>
     `;
 
     // Add arrow event listeners if multiple items
@@ -225,7 +232,7 @@ ${currentItems.length > 1 ? `
     const mainMediaContainer = detailView.querySelector('.main-media-container');
     const thumbnailsContainer = detailView.querySelector('.thumbnails-container');
     const mediaDetails = detailView.querySelector('.media-details');
-
+    
    
     const paypalAnchor = document.getElementById(`paypal-anchor-${item.id}`);
     let currentMediaIndex = 0;
@@ -256,6 +263,8 @@ ${currentItems.length > 1 ? `
 
         
     }
+
+    
 
     function showMedia(index) {
         mainMediaContainer.innerHTML = '';
@@ -456,3 +465,24 @@ function toggleGalleryView(viewSize = 'large') {
         navbar.classList.toggle('scrolled', scrollY > 50);
     });
     
+
+    function forceCenterDetailView() {
+        if (window.innerWidth >= 769 && currentDetailId) {
+            const detailView = document.querySelector('.gallery-item-detail');
+            if (detailView) {
+                // Force the centering
+                detailView.style.position = 'fixed';
+                detailView.style.top = '50%';
+                detailView.style.left = '50%';
+                detailView.style.transform = 'translate(-50%, -50%)';
+                detailView.style.zIndex = '10000';
+                
+                // Log for debugging
+                console.log('Detail view centered:', {
+                    top: detailView.style.top,
+                    left: detailView.style.left,
+                    transform: detailView.style.transform
+                });
+            }
+        }
+    }
