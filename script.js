@@ -186,35 +186,30 @@ function loadGalleryItemDetails(id) {
     const currentIndex = currentItems.findIndex(item => item.id.toString() === id);
     
     galleryView.innerHTML = `
-        <div class="gallery-item-detail">
-            <a class="close-detail" href="index.html" style="text-decoration:none">
-    <img src="exitbutton.png" class="close-icon" alt="Close">
-</a>
-${currentItems.length > 1 ? `
-    
-` : ''}
-            <div class="media-column">
-                <div class="main-media-container"></div>
-                
-                <div class="thumbnails-container"></div>
-               
-               <div class="arrowholder"><div class="nav-arrow prev-arrow">
-        <img src="LeftButton.png" class="arrow-icon" alt="Previous">
-    </div>
-     <div class="nav-arrow next-arrow">
-        <img src="RightButton.png" class="arrow-icon" alt="Next">
-    </div>
-    </div> 
+    <div class="gallery-item-detail">
+        <div class="media-column">
+            <div class="main-media-container"></div>
+            <div class="thumbnails-container"></div>
+        </div>
+        <div class="details-column">
+            <div class="top-controls">
+                ${currentItems.length > 1 ? `
+                    <div class="nav-arrow prev-arrow">
+                        <img src="LeftButton.png" class="arrow-icon" alt="Previous">
+                    </div>
+                    <div class="nav-arrow next-arrow">
+                        <img src="RightButton.png" class="arrow-icon" alt="Next">
+                    </div>
+                ` : ''}
+                <a class="close-detail" href="index.html" style="text-decoration:none">
+                    <img src="exitbutton.png" class="close-icon" alt="Close">
+                </a>
             </div>
-            <div class="details-column">
-                <div class="media-details"></div>
-                <div id="paypal-anchor-${item.id}" class="paypal-container"></div>
-                
-                </div>
-       
-                </div>
+            <div class="media-details"></div>
+            <div id="paypal-anchor-${item.id}" class="paypal-container"></div>
+        </div>
+    </div>
     `;
-
     // Add arrow event listeners if multiple items
     if(currentItems.length > 1) {
         galleryView.querySelector('.prev-arrow').addEventListener('click', () => 
@@ -269,24 +264,41 @@ ${currentItems.length > 1 ? `
     function showMedia(index) {
         mainMediaContainer.innerHTML = '';
         mediaDetails.innerHTML = '';
-
+    
         const media = item.media[index];
         const mediaElement = media.type === 'video' ?
             `<video controls src="${media.url}" class="gallery-detail-media"></video>` :
             `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
-
+    
         mainMediaContainer.innerHTML = mediaElement;
-
+    
+        // Detect orientation for images
+        if (media.type === 'image') {
+            const img = mainMediaContainer.querySelector('img');
+            const setOrientationClass = () => {
+                if (window.innerWidth >= 769) { // Desktop only
+                    detailView.classList.remove('landscape-mode', 'portrait-mode');
+                    if (img.naturalWidth > img.naturalHeight) {
+                        detailView.classList.add('landscape-mode');
+                    } else {
+                        detailView.classList.add('portrait-mode');
+                    }
+                }
+            };
+            if (img.complete) {
+                setOrientationClass();
+            } else {
+                img.onload = setOrientationClass;
+            }
+        }
+    
         mediaDetails.innerHTML = `
             <h3>${item.title}</h3>
             <p>${item.year}, ${item.medium}</p>
             <p>${item.description}</p>
         `;
-
-        updateThumbnails(index);
-
-        
     
+        updateThumbnails(index);
     }
 
     // Function to create and display thumbnails
@@ -320,7 +332,6 @@ ${currentItems.length > 1 ? `
     // Show the first media item initially
     showMedia(currentMediaIndex);
     createThumbnails();
-    attachArrowClickEvents();
 
     galleryView.querySelector('.close-detail').addEventListener('click', () => {
        // Clear the detail view

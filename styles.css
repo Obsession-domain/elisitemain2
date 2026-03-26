@@ -229,46 +229,28 @@ h3 {
     align-items: center;
 }
 
-/* Arrow navigation */
+/* Arrow navigation - HIDDEN */
 .nav-arrow {
-   
-  font-weight: bolder;
-    font-size: 1.5rem;
-    cursor: pointer;
-    z-index: 9000;
-    transition: transform 0.3s ease;
-    width: 30px;
-    height: 30px;
-
-    -webkit-filter: drop-shadow(0px 0px 2px #000000);
-    filter: drop-shadow(0px 0px 2px #000000);
+    display: none !important;
 }
-
 .arrow-icon {
-    width: 40px;
-    height: 40px;
-    pointer-events: none; /* Make image click-through */
-    
-    
+    display: none !important;
 }
 
 .nav-arrow:hover {
     transform: scale(1.2);
-
-    
 }
 
-.prev-arrow {
-    left: 10px;
+
+.top-controls {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    flex-shrink: 0; /* Don't shrink controls */
 }
 
-.next-arrow {
-    right: 10px;
-}
-
-.arrowholder {
-columns: 2;
-}
 .galleryshop-container {
     display: flex;
     justify-content: center; /* Center horizontally */
@@ -534,9 +516,11 @@ columns: 2;
 }
 
 .gallery-view.detail-view-active {
-    margin-top: 50px !important; /* Reduced margin for detail view */
-    margin: auto;
+    margin-top: 50px;
     display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
 }
 
 .gallery-item {
@@ -560,26 +544,11 @@ scale: 1.03;
 
 
 .close-detail {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    cursor: pointer;
-    color: #DED7BE;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    z-index: 9000;
-    transition: transform 0.3s ease;
-    padding: 5px; /* Adjust if needed */
-    width: 35px;
-    height: 35px;
-
-    
+    display: none !important;
 }
 
 .close-icon {
-    width: 35px;
-    height: 35px;
-    pointer-events: none; /* Make image click-through */
-    transition: transform 0.3s ease;
+    display: none !important;
 }
 
 .close-detail:hover {
@@ -700,15 +669,13 @@ scale: 1.03;
 .gallery-item,
 .gallery-item-detail {
     border: 1px solid rgba(255, 255, 255, 0.1);
-
     background-color: rgba(255, 255, 255, 0.042); 
     color: #DED7BE;
-    position: relative; /* For absolute positioned arrows */
+    position: relative;
     padding: 1rem;
     border-radius: 5px;
-    transition: all 0.3s ease-out;
-
-    
+    /* transition removed or set to none */
+    transition: none;
 }
 /* Large View */
 .gallery-container {
@@ -799,6 +766,8 @@ scale: 1.03;
     max-width: 100%;
     height: auto;
     display: block;
+    border-radius: 5px;
+
 }
 .gallery-title, .gallery-description {
     text-align: center;
@@ -811,91 +780,130 @@ scale: 1.03;
     margin: 0 auto;
 }
 
-/* Ensuring the detailed view is centered */
 .gallery-item-detail {
     display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: flex-start;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.042); 
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.042);
     backdrop-filter: blur(6px);
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
     animation: slideIn 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 
-    /* Centering and scaling for larger screens */
-    position: fixed;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    max-width: 90vw;
-    max-height: 90vh;
-    width: auto;
-    height: auto;
-    overflow: auto;
-    margin: 0;
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+
+    
+    min-width: 280px;
+    max-width: calc(90vw - 40px);
+    width: fit-content;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: 10px auto;
+
     padding: 20px;
     box-sizing: border-box;
-    z-index: 10000;
-}
-.gallery-item-detail .media-column {
-    flex: 2;
-    max-height: 70vh;
-    display: flex;
-    flex-direction: column;
-    min-width: 60%;
+    overflow: visible;
 }
 
-.media-column {
-    flex: 2; /* Give more space to media column */
-    min-width: 70%;
-    position: relative;
+/* Wider card for landscape images */
+.gallery-item-detail.landscape-mode {
+    max-width: 800px !important;
+}
+
+
+/* ── Detail view inner layout ── */
+
+.gallery-item-detail .media-column {
     display: flex;
     flex-direction: column;
+    gap: 0; /* gap handled by explicit margins below */
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .gallery-item-detail .main-media-container {
-    max-height: 60vh;
+    width: 100%;
+    min-height: 0;
+    max-height: none;
     display: flex;
     justify-content: center;
-    align-items: center;
-    position: relative;
+    align-items: flex-start;
+    background: transparent;
+    border-radius: 5px;
+    overflow: visible;
 }
 
+/* Image: constrained by viewport, no forced min-height */
 .gallery-item-detail .gallery-detail-image,
 .gallery-item-detail .gallery-detail-media {
-    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
     max-height: 60vh;
     width: auto;
+    max-width: 100%;
     height: auto;
-    object-fit: contain;
+    min-height: 0;
 }
 
+/* Landscape: fill width so it scales up to match portrait visual weight */
+.gallery-item-detail.landscape-mode .gallery-detail-image,
+.gallery-item-detail.landscape-mode .gallery-detail-media {
+    width: 100%;
+    max-height: 60vh;
+}
+
+/* Thumbnails: fixed spacing above, never affects what's below */
 .gallery-item-detail .thumbnails-container {
-    max-height: 80px;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px; /* fixed gap from image */
+    margin-bottom: 0px; /* fixed gap from text */
+
+    padding: 3px 0;
     overflow-x: auto;
     overflow-y: hidden;
-    justify-content: center;
     flex-wrap: nowrap;
-    margin-top: 15px;
+    flex-shrink: 0;
+
+    justify-content: center;
+    min-height: 0; /* collapses cleanly when empty */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(222, 215, 190, 0.3) transparent;
 }
 
-.gallery-item-detail .details-column {
-    flex: 1;
-    max-height: 70vh;
-    overflow-y: auto;
-    padding-right: 10px;
-    min-width: 30%;
+/* Hide thumbnails container entirely when it has no children */
+.gallery-item-detail .thumbnails-container:empty {
+    display: none;
+    margin-top: 0;
 }
 
-/* Ensure close button stays in top right */
-.gallery-item-detail .close-detail {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 10001;
+.gallery-item-detail .thumbnails-container::-webkit-scrollbar { height: 1px; }
+.gallery-item-detail .thumbnails-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
+.gallery-item-detail .thumbnails-container::-webkit-scrollbar-thumb { background: rgba(222,215,190,0.3); border-radius: 3px; }
+.gallery-item-detail .thumbnails-container::-webkit-scrollbar-thumb:hover { background: rgba(222,215,190,0.5); }
+
+/* Details column: fixed gap from the media section above */
+.details-column {
+    display: flex;
+    flex-direction: column;
+    max-height: none;
+    overflow-y: visible;
+    overflow-x: hidden;
+    padding-right: 0;
+    min-width: 0;
+    margin-top: -14px ;
 }
+
+
+
+
 
 /* Scale PayPal container */
 .gallery-item-detail .paypal-detail-container {
@@ -904,7 +912,7 @@ scale: 1.03;
 
 .main-media-container {
     position: relative;
-    width: 100%;
+    width: fit-content;
     background: #00000000;
     border-radius: 5px;
     overflow: hidden;
@@ -913,16 +921,17 @@ scale: 1.03;
 
 
 .gallery-item-detail p {
-    margin: 5px 0;
+    margin: 3px 0; /* Reduced from 5px */
     font-size: 1rem;
     color: #DED7BE;
+    line-height: 1.5;
 }
-
 .gallery-item-detail h3 {
-        font-size: var(--h1);
-        position: relative;
-        display: inline-block;
-
+    font-size: var(--h1);
+    position: relative;
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 6px; /* Reduced from 10px */
 }
 
 .gallery-item-detail h3::after {
@@ -933,27 +942,17 @@ scale: 1.03;
     width: 100%;
     height: 2px;
     background-color: #DED7BE;
-animation: rainbow 5s ease;  
-} 
-
-
-
-.gallery-item-detail img {
-    box-sizing: border-box; /* Ensure padding doesn't add to the total size */
+    animation: rainbow 5s ease;  
 }
-.gallery-detail-image, 
+
+
 .gallery-item-detail img {
-    width: 100%;        /* Scale to container width */
-    height: auto;       /* Maintain aspect ratio */
-    
-    object-fit: contain; /* Ensure images fit within bounds without distortion */
-    display: block;     /* Remove extra spacing */
     box-sizing: border-box;
 }
 
 .gallery-detail-image,
 .gallery-detail-media {
-    position: relative; /* Change from absolute */
+    position: relative;
     top: auto;
     left: auto;
     width: auto;
@@ -961,39 +960,61 @@ animation: rainbow 5s ease;
     max-width: 100%;
     max-height: 80vh;
     object-fit: contain;
-    margin: 0, auto;
+    margin: 0 auto;
     display: block;
 }
 
 .media-details {
-    order: 0;
     text-align: left;
     animation: slideIn 1.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-    width: 80%;
-
 }
-
+.gallery-item-detail * {
+    box-sizing: border-box;
+}
 .thumbnails-container {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 15px;
-    animation: slideIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    max-width: 100%;
 
+    flex-wrap: nowrap;
+    animation: slideIn 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(222, 215, 190, 0.3) transparent;
+}
+
+/* Webkit scrollbar styling for thumbnails */
+.thumbnails-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.thumbnails-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.thumbnails-container::-webkit-scrollbar-thumb {
+    background: rgba(222, 215, 190, 0.3);
+    border-radius: 3px;
+}
+
+.thumbnails-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(222, 215, 190, 0.5);
 }
 
 .thumbnail {
     width: 60px !important;
     height: 60px !important;
-    min-width: 60px;
+    min-width: 60px; /* Prevent shrinking */
     min-height: 60px;
     object-fit: cover;
     border-radius: 4px;
     cursor: pointer;
     border: 2px solid transparent;
     transition: border-color 0.3s ease;
+    flex-shrink: 0; /* Don't shrink thumbnails */
 }
-
 .thumbnails-container img.thumbnail {
     flex-shrink: 0;
     flex-grow: 0;
@@ -1136,12 +1157,9 @@ animation: rainbow 5s ease;
 .paypal-detail-container {
     margin-top: 20px;
     padding: 15px;
-    background: #ffd50000;
+    background: transparent;
     border-radius: 5px;
     animation: slideIn 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-
-
-    
 }
 
 paypal-add-to-cart-button {
@@ -1181,8 +1199,23 @@ paypal-cart-button {
     transform: scale(0.5); /* Shrink logo */
 }
 
+/* Portrait mode: make the container narrower and stack columns vertically */
+.gallery-item-detail.portrait-mode {
+    max-width: 530px;  /* Adjust this value to your liking */
+    width: 100%;
+    flex-direction: column;  /* Stack media and details vertically */
+}
 
-/* Existing home button CSS (keep these properties) */
+/* Optionally adjust the media column width */
+.gallery-item-detail.portrait-mode .media-column {
+    width: 100%;
+}
+
+/* Ensure the main media container can expand to fill the narrower width */
+.gallery-item-detail.portrait-mode .main-media-container {
+    width: 100%;
+}
+
 
 .image-container {
     position: relative;
@@ -1192,6 +1225,7 @@ paypal-cart-button {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    
 }
 
 .gallery-image {
@@ -1225,22 +1259,25 @@ paypal-cart-button {
     opacity: 1;
 }
 
+.gallery-item-detail.portrait-mode {
+    padding-left: 10px;
+    padding-right: 10px;
+}
 
 
 
 
 @media (max-width: 768px) {
-    .close-detail {
+    .top-controls {
         display: none !important;
     }
-    
 
     .gallery-view.detail-view-active {
-        margin-top: 50px !important; /* Reduced margin for detail view */
-        margin: 0px;
+        margin-top: 60px;
+        padding: 10px;
     }
     .paypal-detail-container {
-margin-bottom: 100px;
+        margin-bottom: 100px;
     }
     .navbar {
         width: 90%;
@@ -1282,70 +1319,42 @@ margin-bottom: 100px;
 
     .menu-toggle:hover {
         transform: scale(1.2);
-
-    }
-
-
-
-    .gallery-item-detail {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
-        max-width: 100% !important;
-        max-height: none !important;
-        margin: 10px;
-        flex-direction: column;
-        padding: 5px;
-        gap: 1px;
-    }
-
-    .gallery-item-detail .media-column {
-        min-width: 100%;
-        max-height: none;
-    }
-
-    .gallery-item-detail .details-column {
-        max-height: none;
-        min-width: 100%;
-    }
-
-    .gallery-item-detail .main-media-container {
-        max-height: 50vh;
-    }
-
-    .media-column {
-        min-width: 100%;
-    }
-
-    .thumbnails-container {
-        justify-content: center;
     }
 
     .item-description {
         -webkit-line-clamp: 3;
     }
-paypal-cart-button {
-    font-size: 0.7rem;
-    padding: 3px 6px;
-    transform: scale(0.7) !important;
-    padding: 2px 4px !important;
-    right: 2px !important;
-    top: 2px !important;
-}
+    
+    /* Make landscape mode responsive on mobile */
+    .gallery-item-detail.landscape-mode {
+        max-width: 95% !important;
+    }
+    
+    paypal-cart-button {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+        transform: scale(0.7) !important;
+        padding: 2px 4px !important;
+        right: 2px !important;
+        top: 2px !important;
+    }
+    .details-column {
+        margin-top: auto ;
+
+    }
 }
 
 @media (max-width: 480px) {
-    .close-detail {
-        display: none !important;
-    }
+    
     
     .gallery-view.large .gallery-container {
         grid-template-columns: repeat(2, minmax(100px, 1fr));
         max-width: 1200px; /* Optional: constrain maximum width */
         margin: 0 auto; /* Center the grid */
     }
-
+    .gallery-detail-image {
+        max-height: 60vh; /* instead of 300px */
+    }
     .navbar {
         width: 95%;
         top: 5px;
@@ -1371,11 +1380,11 @@ paypal-cart-button {
     .gallery-item-detail img {
         max-width: 100%;
         max-height: 300px;
+        
     }
 
     .media-details h3 {
         font-size: 1.5rem;
-        margin-top: auto;
     }
 
     .media-details p {
@@ -1409,5 +1418,24 @@ paypal-cart-button {
     
     .gallery-image.default-image {
         opacity: 1 !important;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .gallery-detail-media,
+    .gallery-detail-image {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .main-media-container {
+        width: 100% !important;
+    }
+
+    .gallery-item-detail {
+        width: 100%;
+        max-width: calc(90vw - 40px);
     }
 }
