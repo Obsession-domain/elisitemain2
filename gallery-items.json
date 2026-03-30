@@ -1,6 +1,7 @@
 [
   {
     "id": "1",
+<<<<<<< Updated upstream
     "title": "Jelly",
     "year": 2024,
     "medium": "Digital Drawing",
@@ -21,6 +22,20 @@
       {
         "type": "image",
         "url": "https://live.staticflickr.com/65535/54526477591_1fa6098cb3_b.jpg"
+=======
+    "title": "Girl In Balance",
+    "year": 2024,
+    "medium": "3D render",
+    "description": "Portrait of a girl in balance",
+    "media": [
+      {
+        "type": "video",
+        "url": "./PortraitofaBalancedGirlx30000-0720.mov"
+      },
+      {
+        "type": "image",
+        "url": "Website Images/Amber Bug/Closeup1.png"
+>>>>>>> Stashed changes
       }
 
     ]
