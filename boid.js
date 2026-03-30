@@ -324,6 +324,7 @@ class Predator extends Boid {
 }
 
 loadImages(['./Algae/Algae1.png', './Algae/Algae2.png','./Algae/Algae3.png','./Algae/Algae4.png','./Algae/Algae5.png','./Algae/Algae6.png','./Algae/Algae7.png','./Algae/Algae8.png','./Algae/Algae9.png','./Algae/Algae10.png','./Algae/Algae11.png','./Algae/Algae12.png','./Algae/Algae13.png','./Algae/Algae14.png','./Algae/Algae15.png','./Algae/Algae16.png','./Algae/Algae17.png','./Algae/Algae18.png','./Algae/Algae19.png','./Algae/Algae20.png','./Algae/Algae21.png','./Algae/Algae22.png','./Algae/Algae23.png','./Algae/Algae24.png','./Algae/Algae25.png','./Algae/Algae26.png','./Algae/Algae27.png','./Algae/Algae28.png'], (loadedImages) => {
+loadImages(['https://live.staticflickr.com/65535/55170567628_3b4b0d579d_b.jpg', './Algae/Algae2.png','./Algae/Algae3.png','./Algae/Algae4.png','./Algae/Algae5.png','./Algae/Algae6.png','./Algae/Algae7.png','./Algae/Algae8.png','./Algae/Algae9.png','./Algae/Algae10.png','./Algae/Algae11.png','./Algae/Algae12.png','./Algae/Algae13.png','./Algae/Algae14.png','./Algae/Algae15.png','./Algae/Algae16.png','./Algae/Algae17.png','./Algae/Algae18.png','./Algae/Algae19.png','./Algae/Algae20.png','./Algae/Algae21.png','./Algae/Algae22.png','./Algae/Algae23.png','./Algae/Algae24.png','./Algae/Algae25.png','./Algae/Algae26.png','./Algae/Algae27.png','./Algae/Algae28.png'], (loadedImages) => {
     // Reduce the number of entities
     const flock = Array.from({length: 3}, () => new Boid(loadedImages));
     const predators = Array.from({length: 100}, () => new Predator(loadedImages));

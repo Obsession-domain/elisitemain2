@@ -508,7 +508,7 @@ h3 {
 .gallery-view {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Creates a responsive grid */
-    gap: 40px;
+    gap: 80px;
     padding: 40px;
     margin-top: 270px;
     max-width: 100vw;
@@ -864,7 +864,7 @@ scale: 1.03;
     display: flex;
     gap: 10px;
     margin-top: 10px; /* fixed gap from image */
-    margin-bottom: 0px; /* fixed gap from text */
+    margin-bottom: 15px; /* fixed gap from text */
 
     padding: 3px 0;
     overflow-x: auto;
@@ -958,7 +958,7 @@ scale: 1.03;
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: 80vh;
+    max-height: 60vh;
     object-fit: contain;
     margin: 0 auto;
     display: block;
@@ -1265,8 +1265,159 @@ paypal-cart-button {
 }
 
 
+.gallery-item-detail {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+}
 
+.gallery-item-detail.slide-out-up {
+    transform: translateY(-100%) !important;
+    opacity: 0;
+    pointer-events: none;
+}
 
+.gallery-item-detail.slide-out-down {
+    transform: translateY(100%) !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.gallery-item-detail.slide-in-up {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.gallery-item-detail.slide-in-down {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+/* Scroll gradient indicators */
+.details-column {
+    position: relative; /* needed for pseudo-element positioning */
+}
+
+.scroll-gradient {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 160px;      /* was 120px */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10001;
+}
+
+.scroll-gradient.top {
+    top: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, transparent 100%);
+}
+
+.scroll-gradient.bottom {
+    bottom: 0;
+    background: linear-gradient(to top, rgba(255,255,255,0.35) 0%, transparent 100%);
+}
+
+.scroll-gradient.visible {
+    opacity: 1;
+}
+
+/* ── Infinite scroll view additions ─────────────────────────────────────────
+   Add these to the bottom of your styles.css.
+   All card styling (gallery-item-detail, media-column, etc.) is unchanged.
+   We only need to override positioning so cards flow in a column instead of
+   being fixed/centered as a popup.
+──────────────────────────────────────────────────────────────────────────── */
+
+/* gallery-view state when scroll view is active */
+.gallery-view.scroll-view-active {
+    display: block;         /* override the grid */
+    margin-top: 60px;       /* just enough clearance under the collapsed navbar */
+    padding: 20px;
+    overflow: visible;
+}
+
+/* Vertical stack of cards */
+.scroll-view-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding-bottom: 80px;
+}
+
+/* Each card wrapper — lets the card size itself naturally */
+.detail-card-wrapper {
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Override the popup-specific positioning on the card itself */
+.scroll-view-stack .gallery-item-detail {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: fit-content;
+    max-width: calc(90vw - 40px);
+    margin: 0 auto;
+    align-items: center;
+
+    /* keep all other existing card styles intact */
+}
+/* Media column no longer forces full width — shrinks to image */
+.scroll-view-stack .gallery-item-detail .media-column {
+    width: fit-content;
+    max-width: 100%;
+}
+/* Image: natural size, capped at viewport */
+.scroll-view-stack .gallery-item-detail .gallery-detail-image,
+.scroll-view-stack .gallery-item-detail .gallery-detail-media {
+    width: auto;
+    height: auto;
+    max-width: 80vw;
+    max-height: 50vh;
+    display: block;
+}
+
+/* Details column matches the image width */
+.scroll-view-stack .gallery-item-detail .details-column {
+    width: 100%;
+}
+
+/* Thumbnails also match */
+.scroll-view-stack .gallery-item-detail .thumbnails-container {
+    width: 100%;
+}
+
+/* Fixed close button — top right, always visible */
+#scroll-view-close {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 9999;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    filter: drop-shadow(0px 0px 3px #000);
+}
+
+/* Use a separate class so it isn't caught by the existing .close-icon { display:none } rule */
+.close-icon-visible {
+    width: 36px;
+    height: 36px;
+    display: block !important;
+}
+
+@media (max-width: 768px) {
+    .gallery-view.scroll-view-active {
+        margin-top: 50px;
+        padding: 12px;
+    }
+
+    .scroll-view-stack {
+        gap: 24px;
+    }
+}
 @media (max-width: 768px) {
     .top-controls {
         display: none !important;
@@ -1438,4 +1589,20 @@ paypal-cart-button {
         width: 100%;
         max-width: calc(90vw - 40px);
     }
+}
+
+
+.scroll-view-stack .gallery-item-detail .details-column {
+    max-height: none !important;
+    overflow-y: visible !important;
+    overflow-x: visible !important;
+}
+
+.scroll-view-stack .gallery-item-detail {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+.scroll-view-stack .detail-card-wrapper {
+    overflow: visible;
 }
