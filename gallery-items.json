@@ -1,7 +1,6 @@
 [
   {
     "id": "1",
-<<<<<<< Updated upstream
     "title": "Jelly",
     "year": 2024,
     "medium": "Digital Drawing",
@@ -22,7 +21,11 @@
       {
         "type": "image",
         "url": "https://live.staticflickr.com/65535/54526477591_1fa6098cb3_b.jpg"
-=======
+      }
+    ]
+  },
+      {
+        "id": "2",
     "title": "Girl In Balance",
     "year": 2024,
     "medium": "3D render",
@@ -35,14 +38,13 @@
       {
         "type": "image",
         "url": "Website Images/Amber Bug/Closeup1.png"
->>>>>>> Stashed changes
       }
 
     ]
 
   },
   {
-    "id": "2",
+    "id": "3",
     "title": "Heart",
     "year": 2021,
     "medium": "3D Print",
@@ -69,7 +71,7 @@
 
   },
   {
-    "id": "3",
+    "id": "4",
     "title": "Drill",
     "year": 2023,
     "medium": "Animation",
@@ -94,7 +96,7 @@
     ]
   },
   {
-    "id": "4",
+    "id": "5",
     "title": "Butterfly",
     "year": 2023,
     "medium": "Animation",
@@ -132,7 +134,7 @@
     ]
   },
   {
-    "id": "5",
+    "id": "6",
     "title": "Amber Pyrops",
     "year": 2024,
     "medium": "Digital Drawing",
@@ -163,7 +165,7 @@
 
   },
   {
-    "id": "6",
+    "id": "7",
     "title": "Baroque Still Life",
     "year": 2021,
     "medium": "3D Print",
@@ -194,7 +196,7 @@
     ]
   },
   {
-    "id": "7",
+    "id": "8",
     "title": "Reindeer Beetle",
     "year": 2023,
     "medium": "Animation",
