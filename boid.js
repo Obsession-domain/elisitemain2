@@ -1,183 +1,120 @@
 const canvas = document.getElementById('boidsCanvas');
-// Basic context without advanced options for better performance
 const ctx = canvas.getContext('2d', { alpha: true });
-
-// Set minimal image smoothing - only if really needed
-ctx.imageSmoothingEnabled = false; // Disable for better performance
-canvas.width = window.innerWidth;
+ctx.imageSmoothingEnabled = false;
+canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Create gradient (horizontal)
+// ─── Background Gradients ────────────────────────────────────────────────────
 const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+gradient.addColorStop(0,   'rgb(19, 20, 20)');
+gradient.addColorStop(0.2, 'rgb(0, 0, 0)');
+gradient.addColorStop(0.9, 'rgb(0, 0, 0)');
+gradient.addColorStop(1,   'rgb(27, 28, 24)');
 
-// Add color stops
-gradient.addColorStop(0, 'rgb(19, 20, 20)'); // Start with black
-gradient.addColorStop(0.2, 'rgb(0, 0, 0)'); // Start with black
-
-gradient.addColorStop(0.9, 'rgb(0, 0, 0)'); // Start with black
-gradient.addColorStop(1, 'rgb(27, 28, 24)'); // End with dark gray
-
-
-
-// Create a background gradient - initialized in the resize handler
 let ovalGradient;
-
-// Function to create the oval gradient background
 function createOvalGradient() {
-    // Create a radial gradient for the oval
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    
-    // Make the oval about 70% of the screen width and height
-    const radiusX = canvas.width * 0.6;
-    const radiusY = canvas.height * 0.35;
-    
-
-    // Create a gradient from center to the edges
-    ovalGradient = ctx.createRadialGradient(
-        centerX, centerY, 0,
-        centerX, centerY, Math.max(radiusX, radiusY)
-    );
-    
-    // Add color stops for the gradient
-    ovalGradient.addColorStop(0, 'rgba(7, 8, 8, 0.88)');  // Light grey center
-    ovalGradient.addColorStop(0.7, 'rgba(6, 2, 32, 0.07)');   // Mid grey
-    ovalGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');         // Fade to transparent
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    const rx = canvas.width * 0.6, ry = canvas.height * 0.35;
+    ovalGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+    ovalGradient.addColorStop(0,   'rgba(7, 8, 8, 0.88)');
+    ovalGradient.addColorStop(0.7, 'rgba(6, 2, 32, 0.07)');
+    ovalGradient.addColorStop(1,   'rgba(0, 0, 0, 0)');
 }
-
-// Initialize the gradient
 createOvalGradient();
 
-const images = [];
-const loadImages = (sources, callback) => {
-    let loadedImages = 0;
+// ─── Image Loader ────────────────────────────────────────────────────────────
+function loadImages(sources, callback) {
+    const loaded = [];
+    let completed = 0;
+    if (sources.length === 0) { callback(loaded); return; }
     sources.forEach(source => {
         const img = new Image();
         img.onload = () => {
-            if (++loadedImages >= sources.length) {
-                callback(images);
-            }
+            loaded.push(img);
+            if (++completed >= sources.length) callback(loaded);
+        };
+        img.onerror = () => {
+            console.warn('Failed to load image:', source);
+            if (++completed >= sources.length) callback(loaded);
         };
         img.src = source;
-        images.push(img);
     });
-};
-
-class Vector {
-    constructor(x = 0, y = 0) {
-        this.x = x;
-        this.y = y;
-    }
-
-    static subtract(v1, v2) {
-        return new Vector(v1.x - v2.x, v1.y - v2.y);
-    }
-
-    add(vector) {
-        this.x += vector.x;
-        this.y += vector.y;
-    }
-
-    subtract(vector) {
-        this.x -= vector.x;
-        this.y -= vector.y;
-    }
-
-    multiply(scalar) {
-        this.x *= scalar;
-        this.y *= scalar;
-    }
-
-    divide(scalar) {
-        this.x /= scalar;
-        this.y /= scalar;
-    }
-
-    magnitude() {
-        return Math.sqrt(this.x ** 2 + this.y ** 2);
-    }
-
-    normalize() {
-        const mag = this.magnitude();
-        if (mag > 0) {
-            this.divide(mag);
-        }
-    }
-
-    limit(max) {
-        if (this.magnitude() > max) {
-            this.normalize();
-            this.multiply(max);
-        }
-    }
-
-    distance(vector) {
-        const dx = this.x - vector.x, dy = this.y - vector.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
 }
 
+// ─── Vector ──────────────────────────────────────────────────────────────────
+class Vector {
+    constructor(x = 0, y = 0) { this.x = x; this.y = y; }
+    static subtract(v1, v2) { return new Vector(v1.x - v2.x, v1.y - v2.y); }
+    add(v)      { this.x += v.x; this.y += v.y; }
+    subtract(v) { this.x -= v.x; this.y -= v.y; }
+    multiply(s) { this.x *= s;   this.y *= s; }
+    divide(s)   { this.x /= s;   this.y /= s; }
+    magnitude() { return Math.sqrt(this.x ** 2 + this.y ** 2); }
+    normalize() { const m = this.magnitude(); if (m > 0) this.divide(m); }
+    limit(max)  { if (this.magnitude() > max) { this.normalize(); this.multiply(max); } }
+    distance(v) { const dx = this.x - v.x, dy = this.y - v.y; return Math.sqrt(dx*dx + dy*dy); }
+}
+
+// ─── Base Boid ───────────────────────────────────────────────────────────────
 class Boid {
-    constructor(imageArray) {
-        // Generate a random spawn position
-        this.position = new Vector(Math.random() * canvas.width, Math.random() * canvas.height);
-        this.velocity = new Vector((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4);
+    constructor(imageArray, cfg) {
+        this.position     = new Vector(Math.random() * canvas.width, Math.random() * canvas.height);
+        this.velocity     = new Vector((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4);
         this.acceleration = new Vector();
-        this.maxSpeed = .01 + Math.random() * 0.2;
-        this.maxForce = 0.1;
-        this.image = imageArray[Math.floor(Math.random() * imageArray.length)];
-        this.radius = 1000;
-        this.scale = Math.random() * 0.1 + 0.15;
-        
-        // Add opacity property for fading
-        this.opacity = 0; // Start fully transparent
-        this.fadeState = 'in'; // States: 'in', 'visible', 'out'
-        this.fadeSpeed = 0.01 + Math.random() * 0.02; // Random fade speed
-        
-        // Add rotation properties
-        this.rotation = Math.random() * Math.PI * 2; // Initial random rotation in radians
-        this.rotationSpeed = (Math.random() - 0.005) * 0.003; // Random rotation speed (-0.015 to 0.015 radians per frame)
+        this.image        = imageArray[Math.floor(Math.random() * imageArray.length)];
+
+        this.maxSpeed     = cfg.speedMin + Math.random() * cfg.speedRange;
+        this.maxForce     = cfg.maxForce;
+        this.scale        = cfg.scaleMin + Math.random() * cfg.scaleRange;
+        this.flockWeight  = cfg.flockWeight;  // 0 = solo drifter, 1 = full flocking
+        this.perceptionR  = cfg.perceptionR;
+
+        this.opacity      = 0;
+        this.fadeState    = 'in';
+        this.fadeSpeed    = cfg.fadeSpeedMin + Math.random() * cfg.fadeSpeedRange;
+        this.rotation     = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * cfg.rotationRange;
     }
-    
+
     edges() {
-        // Start fade out when close to an edge
-        const margin = 50; // Margin to start fading
-        
+        const margin = 50;
         if (this.fadeState === 'visible') {
-            if (this.position.x > canvas.width - margin || 
-                this.position.x < margin || 
-                this.position.y > canvas.height - margin || 
-                this.position.y < margin) {
+            if (this.position.x > canvas.width  - margin || this.position.x < margin ||
+                this.position.y > canvas.height - margin || this.position.y < margin) {
                 this.fadeState = 'out';
             }
         }
-        
-        // Teleport to the opposite side when fully invisible
         if (this.opacity <= 0 && this.fadeState === 'out') {
-            if (this.position.x > canvas.width) this.position.x = 0;
-            if (this.position.x < 0) this.position.x = canvas.width;
+            if (this.position.x > canvas.width)  this.position.x = 0;
+            if (this.position.x < 0)             this.position.x = canvas.width;
             if (this.position.y > canvas.height) this.position.y = 0;
-            if (this.position.y < 0) this.position.y = canvas.height;
-            this.fadeState = 'in'; // Start fading in again
+            if (this.position.y < 0)             this.position.y = canvas.height;
+            this.fadeState = 'in';
         }
     }
 
-    align(boids) {
-        let perceptionRadius = 90;
+    steer(boids, mode) {
+        const r      = mode === 'separation' ? this.perceptionR * 0.55 : this.perceptionR;
         let steering = new Vector();
-        let total = 0;
-        // Process only a subset of boids for performance
+        let total    = 0;
         const maxCheck = Math.min(25, boids.length);
         for (let i = 0; i < maxCheck; i++) {
             const other = boids[Math.floor(Math.random() * boids.length)];
-            let d = this.position.distance(other.position);
-            if (other !== this && d < perceptionRadius) {
-                steering.add(other.velocity);
+            const d     = this.position.distance(other.position);
+            if (other !== this && d < r) {
+                if (mode === 'align')      steering.add(other.velocity);
+                if (mode === 'cohesion')   steering.add(other.position);
+                if (mode === 'separation') {
+                    const diff = Vector.subtract(this.position, other.position);
+                    diff.divide(d * d);
+                    steering.add(diff);
+                }
                 total++;
             }
         }
         if (total > 0) {
             steering.divide(total);
+            if (mode === 'cohesion') steering.subtract(this.position);
             steering.normalize();
             steering.multiply(this.maxSpeed);
             steering.subtract(this.velocity);
@@ -186,70 +123,26 @@ class Boid {
         return steering;
     }
 
-    cohesion(boids) {
-        let perceptionRadius = 90;
-        let steering = new Vector();
-        let total = 0;
-        // Process only a subset of boids for performance
-        const maxCheck = Math.min(25, boids.length);
-        for (let i = 0; i < maxCheck; i++) {
-            const other = boids[Math.floor(Math.random() * boids.length)];
-            let d = this.position.distance(other.position);
-            if (other !== this && d < perceptionRadius) {
-                steering.add(other.position);
-                total++;
-            }
-        }
-        if (total > 0) {
-            steering.divide(total);
-            steering.subtract(this.position);
-            steering.normalize();
-            steering.multiply(this.maxSpeed);
-            steering.subtract(this.velocity);
-            steering.limit(this.maxForce);
-        }
-        return steering;
-    }
-
-    separation(boids) {
-        let perceptionRadius = 50;
-        let steering = new Vector();
-        let total = 0;
-        // Process only a subset of boids for performance
-        const maxCheck = Math.min(25, boids.length);
-        for (let i = 0; i < maxCheck; i++) {
-            const other = boids[Math.floor(Math.random() * boids.length)];
-            let d = this.position.distance(other.position);
-            if (other !== this && d < perceptionRadius) {
-                let diff = Vector.subtract(this.position, other.position);
-                diff.divide(d * d);
-                steering.add(diff);
-                total++;
-            }
-        }
-        if (total > 0) {
-            steering.divide(total);
-            steering.normalize();
-            steering.multiply(this.maxSpeed);
-            steering.subtract(this.velocity);
-            steering.limit(this.maxForce);
-        }
-        return steering;
+    flock(boids) {
+        if (this.flockWeight === 0) return;
+        const a = this.steer(boids, 'align');
+        const c = this.steer(boids, 'cohesion');
+        const s = this.steer(boids, 'separation');
+        a.multiply(this.flockWeight);
+        c.multiply(this.flockWeight);
+        s.multiply(this.flockWeight);
+        this.acceleration.add(a);
+        this.acceleration.add(c);
+        this.acceleration.add(s);
     }
 
     updateFade() {
-        // Handle fading in or out
         if (this.fadeState === 'in' && this.opacity < 1) {
             this.opacity += this.fadeSpeed;
-            if (this.opacity >= 1) {
-                this.opacity = 1;
-                this.fadeState = 'visible';
-            }
+            if (this.opacity >= 1) { this.opacity = 1; this.fadeState = 'visible'; }
         } else if (this.fadeState === 'out' && this.opacity > 0) {
             this.opacity -= this.fadeSpeed;
-            if (this.opacity <= 0) {
-                this.opacity = 0;
-            }
+            if (this.opacity <= 0) this.opacity = 0;
         }
     }
 
@@ -258,141 +151,125 @@ class Boid {
         this.velocity.add(this.acceleration);
         this.velocity.limit(this.maxSpeed);
         this.acceleration.multiply(0);
-        this.updateFade(); // Update opacity based on fade state
-        
-        // Update rotation
+        this.updateFade();
         this.rotation += this.rotationSpeed;
-        // Keep rotation within 0 to 2π range (optional)
-        if (this.rotation > Math.PI * 2) this.rotation -= Math.PI * 2;
-        if (this.rotation < 0) this.rotation += Math.PI * 2;
-        
+        if (this.rotation >  Math.PI * 2) this.rotation -= Math.PI * 2;
+        if (this.rotation < 0)            this.rotation += Math.PI * 2;
         this.edges();
     }
 
     draw() {
-        // Save the current context state
+        if (!this.image || this.image.width === 0) return;
         ctx.save();
-        
-        // Apply the current opacity
-        ctx.globalAlpha = this.opacity; 
-        
-        // Calculate the center for rotation
-        const scaledWidth = this.image.width * this.scale;
-        const scaledHeight = this.image.height * this.scale;
-        const centerX = this.position.x;
-        const centerY = this.position.y;
-        
-        // Translate to center point, rotate, then draw
-        ctx.translate(centerX, centerY);
+        ctx.globalAlpha = this.opacity;
+        const w = this.image.width  * this.scale;
+        const h = this.image.height * this.scale;
+        ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.rotation);
-        
-        // Draw image centered on the rotation point
-        ctx.drawImage(
-            this.image,
-            -scaledWidth / 2,
-            -scaledHeight / 2,
-            scaledWidth,
-            scaledHeight
-        );
-        
-        // Restore the context to its original state
+        ctx.drawImage(this.image, -w / 2, -h / 2, w, h);
         ctx.restore();
     }
-
-    flock(boids) {
-        let alignment = this.align(boids);
-        let cohesion = this.cohesion(boids);
-        let separation = this.separation(boids);
-        this.acceleration.add(alignment);
-        this.acceleration.add(cohesion);
-        this.acceleration.add(separation);
-    }
 }
 
-class Predator extends Boid {
-    constructor(imageArray) {
-        super(imageArray);
-        this.maxSpeed += 0.1;
-        this.image = imageArray[Math.floor(Math.random() * imageArray.length)];
-        this.radius = 9;
-        // Predators can have different fade speeds if desired
-        this.fadeSpeed = 0.0001 + Math.random() * 0.025; // Slightly faster fade for predators
-        
-        // Predators might rotate differently
-        this.rotationSpeed = (Math.random() - 0.0005) * 0.005; // Slightly faster rotation for predators
-    }
-}
+// ─── Layer Configs ───────────────────────────────────────────────────────────
 
-loadImages(['https://live.staticflickr.com/65535/55170567628_3b4b0d579d_b.jpg', './Algae/Algae2.png','./Algae/Algae3.png','./Algae/Algae4.png','./Algae/Algae5.png','./Algae/Algae6.png','./Algae/Algae7.png','./Algae/Algae8.png','./Algae/Algae9.png','./Algae/Algae10.png','./Algae/Algae11.png','./Algae/Algae12.png','./Algae/Algae13.png','./Algae/Algae14.png','./Algae/Algae15.png','./Algae/Algae16.png','./Algae/Algae17.png','./Algae/Algae18.png','./Algae/Algae19.png','./Algae/Algae20.png','./Algae/Algae21.png','./Algae/Algae22.png','./Algae/Algae23.png','./Algae/Algae24.png','./Algae/Algae25.png','./Algae/Algae26.png','./Algae/Algae27.png','./Algae/Algae28.png'], (loadedImages) => {
-    // Reduce the number of entities
-    const flock = Array.from({length: 3}, () => new Boid(loadedImages));
-    const predators = Array.from({length: 100}, () => new Predator(loadedImages));
+const BACK_CFG = {
+    // Small, slow, tight flocking — distant background organisms
+    speedMin: 0.01,   speedRange: 0.15,
+    maxForce: 0.08,
+    scaleMin: 0.08,   scaleRange: 0.08,
+    flockWeight: 1.0,
+    perceptionR: 90,
+    fadeSpeedMin: 0.008, fadeSpeedRange: 0.015,
+    rotationRange: 0.004,
+    count: 80,
+};
 
-    // Use a lower frame rate for animation
+const MIDDLE_CFG = {
+    // Medium scale, moderate speed, loose flocking
+    speedMin: 0.05,   speedRange: 0.25,
+    maxForce: 0.06,
+    scaleMin: 0.18,   scaleRange: 0.12,
+    flockWeight: 0.5,
+    perceptionR: 120,
+    fadeSpeedMin: 0.006, fadeSpeedRange: 0.012,
+    rotationRange: 0.006,
+    count: 40,
+};
+
+const FRONT_CFG = {
+    // Large, very slow, pure independent drifters — no flocking
+    speedMin: 0.005,  speedRange: 0.04,
+    maxForce: 0.02,
+    scaleMin: 0.35,   scaleRange: 0.20,
+    flockWeight: 0,   // fully independent
+    perceptionR: 150,
+    fadeSpeedMin: 0.003, fadeSpeedRange: 0.006,
+    rotationRange: 0.002,
+    count: 15,
+};
+
+// ─── Image Sources ───────────────────────────────────────────────────────────
+// Each folder may have up to 49 images (0000–0048); missing ones are skipped via onerror
+const pad  = i => String(i).padStart(4, '0');
+const BACK_SOURCES   = Array.from({length: 49}, (_, i) => `./back/Radiolarian${pad(i)}.png`);
+const MIDDLE_SOURCES = Array.from({length: 49}, (_, i) => `./middle/Radiolarian${pad(i)}.png`);
+const FRONT_SOURCES  = Array.from({length: 49}, (_, i) => `./front/Radiolarian${pad(i)}.png`);
+
+// ─── Bootstrap: chain-load all three layers ──────────────────────────────────
+loadImages(BACK_SOURCES, backImgs => {
+    loadImages(MIDDLE_SOURCES, middleImgs => {
+        loadImages(FRONT_SOURCES, frontImgs => {
+            startAnimation(backImgs, middleImgs, frontImgs);
+        });
+    });
+});
+
+function startAnimation(backImgs, middleImgs, frontImgs) {
+    // If a folder is empty/missing, fall back to the back layer images
+    if (middleImgs.length === 0) middleImgs = backImgs;
+    if (frontImgs.length  === 0) frontImgs  = backImgs;
+
+    const backLayer   = Array.from({length: BACK_CFG.count},   () => new Boid(backImgs,   BACK_CFG));
+    const middleLayer = Array.from({length: MIDDLE_CFG.count},  () => new Boid(middleImgs, MIDDLE_CFG));
+    const frontLayer  = Array.from({length: FRONT_CFG.count},   () => new Boid(frontImgs,  FRONT_CFG));
+
     let lastFrameTime = 0;
-    const frameInterval = 1000/30; // Aim for 30 FPS instead of 60+
+    const frameInterval = 1000 / 30;
 
     function animate(currentTime) {
-        // Skip frames to maintain target framerate
         if (currentTime - lastFrameTime < frameInterval) {
             requestAnimationFrame(animate);
             return;
         }
         lastFrameTime = currentTime;
-        
-        // First draw a pure black background
-        // Apply gradient
-ctx.fillStyle = gradient;
-ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        
-        // Then draw the blurred grey oval in the center
+        // Draw background
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = ovalGradient;
-        
-        // Draw an oval with blur effect
         ctx.beginPath();
-        
-        // Calculate oval dimensions - center of canvas
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radiusX = canvas.width * 0.9;
-        const radiusY = canvas.height * 0.9;
-        
-        // Draw an ellipse
-        ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.ellipse(canvas.width/2, canvas.height/2, canvas.width*0.9, canvas.height*0.9, 0, 0, Math.PI*2);
         ctx.fill();
-        
-    
-        // Process entities in batches for better performance
-        const allEntities = [...flock, ...predators];
-        
-        // Update physics first
-        for (let i = 0; i < allEntities.length; i++) {
-            const entity = allEntities[i];
-            
-            // Simplified flocking - don't check ALL boids every frame
-            if (i % 3 === 0) { // Only process 1/3 of interactions per frame
-                entity.flock(allEntities);
+
+        // Update & draw back → middle → front (painter's order)
+        [backLayer, middleLayer, frontLayer].forEach(layer => {
+            for (let i = 0; i < layer.length; i++) {
+                if (i % 3 === 0) layer[i].flock(layer); // flock only within own layer
+                layer[i].update();
             }
-            
-            entity.update();
-        }
-        
-        // Then handle rendering
-        for (let i = 0; i < allEntities.length; i++) {
-            allEntities[i].draw();
-        }
-        
+            for (let i = 0; i < layer.length; i++) layer[i].draw();
+        });
+
         requestAnimationFrame(animate);
     }
 
     animate(0);
-});
+}
 
-window.addEventListener('resize', function() {
-    canvas.width = window.innerWidth;
+// ─── Resize ──────────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+    canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-    
-    // Recreate the gradient when window is resized
     createOvalGradient();
 });

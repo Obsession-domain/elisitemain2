@@ -142,10 +142,13 @@ function openScrollView(startId) {
     galleryView.appendChild(stack);
     document.querySelector('.navbar').classList.add('scrolled');
 
-    // Jump instantly to the clicked item
+    // Jump instantly to the clicked item with 100px headroom
     requestAnimationFrame(() => {
         const target = document.getElementById(`detail-card-${startId}`);
-        if (target) target.scrollIntoView({ behavior: 'instant', block: 'start' });
+        if (target) {
+            const top = target.getBoundingClientRect().top + window.scrollY - 100;
+            window.scrollTo({ top, behavior: 'instant' });
+        }
     });
 }
 
