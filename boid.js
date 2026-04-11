@@ -174,22 +174,22 @@ class Boid {
 // ─── Layer Configs ───────────────────────────────────────────────────────────
 
 const BACK_CFG = {
-    // Small, slow, tight flocking — distant background organisms
-    speedMin: 0.01,   speedRange: 0.15,
-    maxForce: 0.08,
-    scaleMin: 0.08,   scaleRange: 0.08,
-    flockWeight: 1.0,
+    // Small, faster, tight flocking — distant background organisms
+    speedMin: 0.04,   speedRange: 0.3,
+    maxForce: 0.12,
+    scaleMin: 0.02,   scaleRange: 0.03,
+    flockWeight: 1.5,
     perceptionR: 90,
     fadeSpeedMin: 0.008, fadeSpeedRange: 0.015,
     rotationRange: 0.004,
-    count: 80,
+    count: 150,
 };
 
 const MIDDLE_CFG = {
     // Medium scale, moderate speed, loose flocking
     speedMin: 0.05,   speedRange: 0.25,
     maxForce: 0.06,
-    scaleMin: 0.18,   scaleRange: 0.12,
+    scaleMin: 0.13,   scaleRange: 0.09,
     flockWeight: 0.5,
     perceptionR: 120,
     fadeSpeedMin: 0.006, fadeSpeedRange: 0.012,
@@ -206,7 +206,7 @@ const FRONT_CFG = {
     perceptionR: 150,
     fadeSpeedMin: 0.003, fadeSpeedRange: 0.006,
     rotationRange: 0.002,
-    count: 15,
+    count: 4,
 };
 
 // ─── Image Sources ───────────────────────────────────────────────────────────
