@@ -184,9 +184,17 @@ function createDetailCard(item) {
         mediaDetails.innerHTML = '';
 
         const media = item.media[index];
-        mainMedia.innerHTML = media.type === 'video'
-            ? `<video controls src="${media.url}" class="gallery-detail-media"></video>`
-            : `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
+        if (media.type === 'video') {
+    mainMedia.innerHTML = `<iframe 
+        src="${media.url}" 
+        class="gallery-detail-media" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+    </iframe>`;
+} else {
+    mainMedia.innerHTML = `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
+}
 
         // Orientation class (desktop only)
         if (media.type === 'image') {
@@ -210,20 +218,25 @@ function createDetailCard(item) {
     }
 
     function createThumbnails() {
-        thumbsContainer.innerHTML = '';
-        item.media.forEach((media, index) => {
-            const thumb = document.createElement('img');
-            thumb.src   = media.url;
-            thumb.alt   = `Thumbnail ${index + 1}`;
+    thumbsContainer.innerHTML = '';
+    item.media.forEach((media, index) => {
+        const thumb = document.createElement(media.type === 'video' ? 'div' : 'img');
+        if (media.type === 'video') {
+            thumb.className = 'thumbnail video-thumb';
+            thumb.textContent = '▶';
+        } else {
+            thumb.src = media.url;
+            thumb.alt = `Thumbnail ${index + 1}`;
             thumb.classList.add('thumbnail');
-            if (index === 0) thumb.classList.add('active');
-            thumb.addEventListener('click', () => {
-                currentMediaIndex = index;
-                showMedia(index);
-            });
-            thumbsContainer.appendChild(thumb);
+        }
+        if (index === 0) thumb.classList.add('active');
+        thumb.addEventListener('click', () => {
+            currentMediaIndex = index;
+            showMedia(index);
         });
-    }
+        thumbsContainer.appendChild(thumb);
+    });
+}
 
     function updateThumbnails(activeIndex) {
         thumbsContainer.querySelectorAll('.thumbnail').forEach((t, i) => {

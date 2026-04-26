@@ -745,7 +745,21 @@ scale: 1.03;
 
 }
 
-
+.video-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: #222;
+    color: #fff;
+    font-size: 1.4rem;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+.video-thumb.active {
+    border-color: white; /* match your active thumbnail style */
+}
 
 
   
@@ -838,6 +852,8 @@ scale: 1.03;
     border-radius: 5px;
     overflow: visible;
 }
+
+
 
 /* Image: constrained by viewport, no forced min-height */
 .gallery-item-detail .gallery-detail-image,
@@ -962,6 +978,14 @@ scale: 1.03;
     object-fit: contain;
     margin: 0 auto;
     display: block;
+}
+
+/* iframes (YouTube) need explicit dimensions — they have no intrinsic size */
+iframe.gallery-detail-media {
+    width: min(760px, 80vw);
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: none;
 }
 
 .media-details {
@@ -1369,12 +1393,21 @@ paypal-cart-button {
     max-width: 100%;
 }
 /* Image: natural size, capped at viewport */
-.scroll-view-stack .gallery-item-detail .gallery-detail-image,
-.scroll-view-stack .gallery-item-detail .gallery-detail-media {
+.scroll-view-stack .gallery-item-detail .gallery-detail-image {
     width: auto;
     height: auto;
     max-width: 80vw;
     max-height: 50vh;
+    display: block;
+}
+
+/* Video iframe: full width with 16:9 ratio */
+.scroll-view-stack .gallery-item-detail iframe.gallery-detail-media,
+iframe.gallery-detail-media {
+    width: min(760px, 80vw);
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: none;
     display: block;
 }
 
@@ -1605,4 +1638,15 @@ paypal-cart-button {
 
 .scroll-view-stack .detail-card-wrapper {
     overflow: visible;
+}
+/* ── Video card width consistency ─────────────────────────────────────────────
+   When a card contains an iframe (YouTube), the media-column should stretch
+   to match the iframe width so the card is the same width as image cards.
+────────────────────────────────────────────────────────────────────────────── */
+.scroll-view-stack .gallery-item-detail:has(iframe.gallery-detail-media) {
+    width: min(760px, 80vw);
+}
+
+.scroll-view-stack .gallery-item-detail:has(iframe.gallery-detail-media) .media-column {
+    width: 100%;
 }
