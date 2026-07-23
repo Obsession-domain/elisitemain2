@@ -199,7 +199,7 @@ function createDetailCard(item) {
 }
 
         mediaDetails.innerHTML = `
-            <h3>${item.title}, ${item.year}, ${item.medium}.</h3>
+            <h3><span class="detail-title">${item.title}</span><span class="detail-meta"> &nbsp${item.year}, ${item.medium}</span></h3>
             <p>${item.description}</p>
         `;
 

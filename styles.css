@@ -43,6 +43,8 @@ p {
 }
 
 h3 {
+            font-size: 1.2rem;
+
     animation: rainbowtext 5s ease;
     font-weight: lighter; 
     margin-bottom: 10px;
@@ -651,6 +653,11 @@ scale: 1.03;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
   }
 
+.item-year,
+.item-medium {
+    opacity: 0.55;
+}
+
 .gallery-view.large .gallery-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
 
@@ -938,6 +945,11 @@ scale: 1.03;
 .gallery-item-detail h3 {
     position: relative;
     display: inline-block;
+}
+
+.gallery-item-detail h3 .detail-meta {
+    opacity: 0.55;
+    font-size: smaller;
 }
 
 
@@ -1510,7 +1522,8 @@ paypal-cart-button {
     }
 
     .media-details h3 {
-        font-size: 0.9rem;
+        font-size: 1.2rem;
+        margin-top: 0px;
     }
 
     .media-details p {
