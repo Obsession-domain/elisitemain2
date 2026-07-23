@@ -1,58 +1,151 @@
 [
+ {
+   "id": "1",
+   "title": "BURNING GALLERY",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/FclxvbZEq-g?si=-S0aImxeI2DbULjt"
+     },
+{
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+
+
+   ]
+
+
+  },  
+ 
   {
-    "id": "1",
-    "title": "Jelly",
-    "year": 2024,
-    "medium": "Digital Drawing",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "media": [
-      {
-        "type": "video",
-        "url": ""
-      },
-      {
-        "type": "video",
-        "url": "https://www.youtube.com/watch?v=ahZn4dVCbvs"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477561_ccae9c1dc8_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477591_1fa6098cb3_b.jpg"
-      }
+   "id": "2",
+   "title": "CORD ATTACK",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/rk_B6sLHU-8?si=6W8pxxH20SZu8tpc"
+     },
+{
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
 
-    ]
 
-   },   
-   
-   {
-    "id": "2",
-    "title": "Jelly",
-    "year": 2024,
-    "medium": "Digital Drawing",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "media": [
-      {
-        "type": "video",
-        "url": ""
-      },
-      {
-        "type": "video",
-        "url": "https://www.youtube.com/watch?v=ahZn4dVCbvs"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477561_ccae9c1dc8_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477591_1fa6098cb3_b.jpg"
-      }
 
-    ]
 
-   }   
+   ]
+
+
+  },
+ 
+  {
+   "id": "3",
+   "title": "VALVE ENCOUNTER",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/v_g5DVyTz_s?si=H8Ypv_U-LqqrE94j"
+     },
+{
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+
+
+   ]
+
+
+  },
+{
+   "id": "4",
+   "title": "PERSPECTOGRAPH",
+   "year": 2026,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/v2v_KmWKSx0?si=0hCzZX4yMBw-fD0u"
+     },
+{
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+
+
+   ]
+
+
+  },
+
+
+{
+   "id": "5",
+   "title": "PANTOGRAPH",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/E-_oOHocJFU?si=EeXnAp65iWUMFheb"
+     },
+{
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+
+
+   ]
+
+
+  },
+
+
+{
+   "id": "7",
+   "title": "ELLIPSOGRAPH",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/qVSw5DBc2H8?si=TTzgB9SlYq0IFX9l"
+     },
+{
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+
+
+   ]
+
+
+  }
 ]
+
+
+
+
 

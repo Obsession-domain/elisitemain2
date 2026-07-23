@@ -1,225 +1,402 @@
 [
-  {
-    "id": "1",
-    "title": "JELLY",
-    "year": 2024,
-    "medium": "Digital Drawing",
-    "description": "",
-    "media": [
+ {
+   "id": "1",
+   "title": "JELLY",
+   "year": 2025,
+   "medium": "3D Render",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526816635_f10ea7d58c_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526713998_f46f6c4347_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526477561_ccae9c1dc8_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526477591_1fa6098cb3_b.jpg"
+     }
+   ]
+ },
       {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526816635_f10ea7d58c_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526713998_f46f6c4347_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477561_ccae9c1dc8_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477591_1fa6098cb3_b.jpg"
-      }
-    ]
-  },
-      {
-        "id": "2",
-    "title": "Girl In Balance",
-    "year": 2024,
-    "medium": "3D render",
-    "description": "Portrait of a girl in balance",
-    "media": [
-      {
-        "type": "video",
-        "url": "https://www.youtube.com/embed/xl5GT3EeYgk?si=--0_-h2jMzVAZtzI"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477561_ccae9c1dc8_b.jpg"
-      }
-
-    ]
-
-  },
-  {
-    "id": "3",
-    "title": "Heart",
-    "year": 2021,
-    "medium": "3D Print",
-    "description": "Lorem ipsum odor amet, consectetuer adipiscing elit. Libero faucibus quis fringilla habitasse ante taciti ligula. Egestas sollicitudin senectus iaculis urna et ipsum. Pretium ultrices justo tincidunt facilisi donec nisi, facilisis nostra. Amet ad potenti pharetra maximus lacus mollis maecenas vivamus velit. Luctus aliquet lobortis mauris, sodales commodo sem. Porta in vulputate, urna molestie malesuada ultrices erat class accumsan. Tortor nunc nascetur maecenas sagittis nam mauris tellus.",
-    "media": [
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477926_79f30c658d_b.jpg"
-        
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526477911_7c61393b87_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54525598777_38f31254d1_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526816915_4a0e27dae0_b.jpg"
-      }
-    ]
-
-  },
-  {
-    "id": "4",
-    "title": "Drill",
-    "year": 2023,
-    "medium": "Animation",
-    "description": "Lorem ipsum odor amet, consectetuer adipiscing elit. Commodo libero venenatis convallis convallis libero nostra dis. Quam metus parturient fermentum scelerisque elit aliquam. Est consequat sapien hac malesuada risus turpis nam adipiscing litora. Hac massa est suspendisse odio dolor montes faucibus. Congue dictum himenaeos vel ultricies tellus volutpat arcu diam. Pharetra ipsum pretium aliquam faucibus mauris donec. Sollicitudin felis habitasse, consequat consectetur dapibus donec maecenas. Tristique platea accumsan finibus quisque risus efficitur neque hendrerit aptent. Rhoncus facilisis et curae purus fermentum cubilia a consequat iaculis.",
-    "media": [
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526817265_66f70e46f0_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526817275_7cc7d9c879_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54525599137_9eb8e0459f_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526478291_9baf998b05_b.jpg"
-      }
-    ]
-  },
-  {
-    "id": "5",
-    "title": "Butterfly",
-    "year": 2023,
-    "medium": "Animation",
-    "description": "A digital drawing of a beautiful sunset. A digital drawing of a beautiful sunset. A digital drawing of a beautiful sunset. A digital drawing of a beautiful sunset. A digital drawing of a beautiful sunset.",
-    "media": [
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54525599587_cc989688b8_b.jpg"
-       
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54525599552_2eea3182a1_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54525599517_bf0898697e_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526817620_5c7a6b438f_b.jpg"
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526661434_ab8ae0e27a_b.jpg"
-
-      },
-      {
-        "type": "image",
-        "url":      "https://live.staticflickr.com/65535/54526715423_891355bbf7_b.jpg"
-
-
-      }
-
-    ]
-  },
-  {
-    "id": "6",
-    "title": "Amber Pyrops",
-    "year": 2024,
-    "medium": "Digital Drawing",
-    "description": "Natural Amber Cast</br></br>Pyrops Candelaria</br></br>&nbsp;&nbsp;&nbsp;&nbsp;An insect form not preserved within amber, but composed entirely of it. The process leading to such a formation is hypothetical, requiring an exceptional sequence of geological and biochemical events.</br></br>&nbsp;&nbsp;&nbsp;&nbsp;Initially, a flowing resin trapped an insect, encasing it in a detailed negative mold. Over time, natural decomposition and mineral interactions dissolved the organic material, leaving a precise void within the hardened resin. Under specific conditions, new resin infiltrated the cavity, gradually replacing the lost structure. As the material polymerized and fossilized over millions of years, the result was a perfect positive cast—an insect sculpted from the very substance that once entombed it.",
-    "media": [
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526706573_ed8a487736_b.jpg"
-       
-        
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526808970_6ee284f8ee_b.jpg"
-
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526652219_180a9b1ceb_b.jpg"
-       
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526652214_8b0b5d3e58_b.jpg"
-       
-      }
-    ]
-
-  },
-  {
-    "id": "7",
-    "title": "Baroque Still Life",
-    "year": 2021,
-    "medium": "3D Print",
-    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
-    "media": [
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526652579_231b706530_b.jpg"
-        
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526809210_44137b5232_b.jpg"
-        
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526809205_c0d4620e64_b.jpg"
-        
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54525591092_519df74db7_b.jpg"
-        
-      }
-
+   "id": "2",
+   "title": "HEART",
+   "year": 2025,
+   "medium": "3D Render",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526477926_79f30c658d_b.jpg"
       
-    ]
-  },
-  {
-    "id": "8",
-    "title": "Reindeer Beetle",
-    "year": 2023,
-    "medium": "Animation",
-    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.",
-    "media": [
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526470311_9921d6db45_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526477911_7c61393b87_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54525598777_38f31254d1_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526816915_4a0e27dae0_b.jpg"
+     }
+   ]
+
+
+ },
+ {
+   "id": "3",
+   "title": "DRILL",
+   "year": 2025,
+   "medium": "3D Render",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526817265_66f70e46f0_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526817275_7cc7d9c879_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54525599137_9eb8e0459f_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526478291_9baf998b05_b.jpg"
+     }
+   ]
+ },
+ {
+   "id": "4",
+   "title": "BUTTERFLY",
+   "year": 2025,
+   "medium": "3D Render",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54525599587_cc989688b8_b.jpg"
+     
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54525599552_2eea3182a1_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54525599517_bf0898697e_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526817620_5c7a6b438f_b.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526661434_ab8ae0e27a_b.jpg"
+
+
+     },
+     {
+       "type": "image",
+       "url":      "https://live.staticflickr.com/65535/54526715423_891355bbf7_b.jpg"
+
+
+
+
+     }
+
+
+   ]
+ },
+ {
+   "id": "5",
+   "title": "AMBER PRYOPS",
+   "year": 2024,
+   "medium": "3D Render",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526706573_ed8a487736_b.jpg"
+     
       
-       
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526652884_0aa9321895_b.jpg"
-       
-      },
-      {
-        "type": "image",
-        "url": "https://live.staticflickr.com/65535/54526707138_4d0627949e_b.jpg"
-        
-      }
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526808970_6ee284f8ee_b.jpg"
+
+
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526652219_180a9b1ceb_b.jpg"
+     
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526652214_8b0b5d3e58_b.jpg"
+     
+     }
+   ]
+
+
+ },
+ {
+   "id": "6",
+   "title": "BAROQUE STILL LIFE",
+   "year": 2021,
+   "medium": "3D Print",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526652579_231b706530_b.jpg"
       
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526809210_44137b5232_b.jpg"
+      
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526809205_c0d4620e64_b.jpg"
+      
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54525591092_519df74db7_b.jpg"
+      
+     }
+
+
     
+   ]
+ },
+
+
+{
+       "id": "7",
+   "title": "Girl In Balance",
+   "year": 2024,
+   "medium": "3D Render",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "NEED VIDEO"
+     },
+     {
+       "type": "image",
+       "url": "NEED TUMBMNAIL"
+     }
+
+
+   ]
+
+
+ },
+{
+       "id": "8",
+   "title": "VESSEL PATINA CAMOUFLAGE",
+   "year": 2024,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/Jv4tMQaDvGw?si=HRXzOvR5tdGJ0zJy"
+     },
+     {
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+   ]
+
+
+ },
+
+
+ {
+   "id": "9",
+   "title": "REINDEER BEETLE",
+   "year": 2023,
+   "medium": "3D Render",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526470311_9921d6db45_b.jpg"
+    
+     
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526652884_0aa9321895_b.jpg"
+     
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/54526707138_4d0627949e_b.jpg"
+      
+     }
     ]
-  }   
+  },
+
+
+{
+       "id": "10",
+   "title": "DEEPSEA ENCOUNTER",
+   "year": 2024,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/C6eYsbhtsD0?si=ivaXrVUBRR6HCcsK"
+     },
+     {
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+   ]
+
+
+ },
+    
+{
+       "id": "11",
+   "title": "DEBRIEFING ROOM",
+   "year": 2023,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/FWe2i7fw1rY?si=kSynmnw_iXY93oy4"
+     },
+     {
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+   ]
+
+
+ },
+
+
+{
+       "id": "12",
+   "title": "TINY TALKS",
+   "year": 2023,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/lPg3OTPPy7M?si=zzszDTAztC-Wx8ru"
+     },
+     {
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+   ]
+
+
+ },
+
+
+{
+       "id": "13",
+   "title": "EMBRYO",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/7EixjAc8Q9k?si=W32nnOmq8xR1-6TV"
+     },
+     {
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+   ]
+
+
+ },
+
+
+{
+       "id": "14",
+   "title": "MOTH",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/4xB5kDSvgTU?si=2bdl1cEK-QVFRcSr"
+     },
+     {
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+   ]
+
+
+ },
+
+
+{
+       "id": "15",
+   "title": "SPIDER",
+   "year": 2025,
+   "medium": "3D Animation",
+   "description": "",
+   "media": [
+     {
+       "type": "video",
+       "url": "https://www.youtube.com/embed/y5HL13Vv9Z8?si=F6tCQXaYvT05sdF2"
+     },
+     {
+       "type": "image",
+       "url": "NEED THUMBNAIL"
+     }
+
+
+   ]
+
+
+ }
+
+
+  
+     
 ]
+
+
+
