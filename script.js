@@ -108,10 +108,12 @@ function createGalleryItem(item) {
         <div class="text-content">
             <div class="title-year">
                 <h3 class="item-title">${item.title}</h3>
-                <span class="item-year">${item.year}</span>
+                <h3 class="item-year">${item.year}</h3>
+                <h3 class="item-medium">${item.medium}</h3>
             </div>
-            <p class="item-medium">${item.medium}</p>
-            <p class="item-description">${item.description}</p>
+                        <p class="item-description">${item.description}</p>
+
+            
         </div>
     `;
 
@@ -161,18 +163,18 @@ function createDetailCard(item) {
     // Card uses exact same markup and classes as before
     wrapper.innerHTML = `
         <div class="gallery-item-detail">
-            <div class="media-column">
-                <div class="main-media-container"></div>
-                <div class="thumbnails-container"></div>
-            </div>
-            <div class="details-column">
+           <div class="details-column">
                 <div class="media-details"></div>
                 <div id="paypal-card-${item.id}" class="paypal-container"></div>
             </div>
+        <div class="media-column">
+                <div class="main-media-container"></div>
+                <div class="thumbnails-container"></div>
+            </div>
+            
         </div>
     `;
 
-    const detailEl        = wrapper.querySelector('.gallery-item-detail');
     const mainMedia       = wrapper.querySelector('.main-media-container');
     const thumbsContainer = wrapper.querySelector('.thumbnails-container');
     const mediaDetails    = wrapper.querySelector('.media-details');
@@ -196,21 +198,8 @@ function createDetailCard(item) {
     mainMedia.innerHTML = `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
 }
 
-        // Orientation class (desktop only)
-        if (media.type === 'image') {
-            const img = mainMedia.querySelector('img');
-            const setOrientation = () => {
-                if (window.innerWidth >= 769) {
-                    detailEl.classList.remove('landscape-mode', 'portrait-mode');
-                    detailEl.classList.add(img.naturalWidth > img.naturalHeight ? 'landscape-mode' : 'portrait-mode');
-                }
-            };
-            img.complete ? setOrientation() : (img.onload = setOrientation);
-        }
-
         mediaDetails.innerHTML = `
-            <h3>${item.title}</h3>
-            <p>${item.year}, ${item.medium}</p>
+            <h3>${item.title}, ${item.year}, ${item.medium}.</h3>
             <p>${item.description}</p>
         `;
 

@@ -236,7 +236,7 @@ function startAnimation(backImgs, middleImgs, frontImgs) {
 
     let lastFrameTime = 0;
     const frameInterval = 1000 / 30;
-
+ 
     function animate(currentTime) {
         if (currentTime - lastFrameTime < frameInterval) {
             requestAnimationFrame(animate);
