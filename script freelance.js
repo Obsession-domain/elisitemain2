@@ -96,14 +96,24 @@ function createGalleryItem(item) {
     galleryItem.className  = 'gallery-item';
     galleryItem.dataset.id = item.id;
 
-    const images      = item.media.filter(m => m.type === 'image');
+    const videos = item.media.filter(m => m.type === 'video');
+    const images = item.media.filter(m => m.type === 'image');
+    const isVideoOnly = typeof item.videoOnly === 'boolean'
+        ? item.videoOnly
+        : (videos.length === 1 && images.length === 1);
+
+    // Video-only entries never get a hover-swap image, so don't let the
+    // default image fade out on hover (nothing to fade in behind it).
+    if (isVideoOnly) galleryItem.classList.add('video-only');
+
     const firstImage  = images[0]?.url || '';
-    const secondImage = images[1]?.url || '';
+    const secondImage = isVideoOnly ? '' : (images[1]?.url || '');
 
     galleryItem.innerHTML = `
         <div class="image-container">
             ${firstImage  ? `<img src="${firstImage}"  alt="${item.title}" class="gallery-image default-image">` : ''}
             ${secondImage ? `<img src="${secondImage}" alt="${item.title}" class="gallery-image hover-image">` : ''}
+            ${isVideoOnly ? `<div class="play-button-overlay"><div class="play-button-icon"></div></div>` : ''}
         </div>
         <div class="text-content">
             <div class="title-year">
@@ -179,13 +189,29 @@ function createDetailCard(item) {
     const thumbsContainer = wrapper.querySelector('.thumbnails-container');
     const mediaDetails    = wrapper.querySelector('.media-details');
 
+    // ── Video-only detection ────────────────────────────────────────────
+    // Auto-detect items that have exactly one video + one picture, and
+    // treat them as "video only" in the detail view (no image, no thumb
+    // strip since there's nothing to switch between).
+    // Override per-item in gallery-items.json with "videoOnly": true/false.
+    const videoCount = item.media.filter(m => m.type === 'video').length;
+    const imageCount = item.media.filter(m => m.type === 'image').length;
+    const isVideoOnly = typeof item.videoOnly === 'boolean'
+        ? item.videoOnly
+        : (videoCount === 1 && imageCount === 1);
+
+    // The list of media this card will actually cycle through
+    const mediaList = isVideoOnly
+        ? item.media.filter(m => m.type === 'video')
+        : item.media;
+
     let currentMediaIndex = 0;
 
     function showMedia(index) {
         mainMedia.innerHTML    = '';
         mediaDetails.innerHTML = '';
 
-        const media = item.media[index];
+        const media = mediaList[index];
         if (media.type === 'video') {
     mainMedia.innerHTML = `<iframe 
         src="${media.url}" 
@@ -203,12 +229,20 @@ function createDetailCard(item) {
             <p>${item.description}</p>
         `;
 
-        updateThumbnails(index);
+        if (!isVideoOnly) updateThumbnails(index);
     }
 
     function createThumbnails() {
     thumbsContainer.innerHTML = '';
-    item.media.forEach((media, index) => {
+
+    // Video-only cards have nothing to switch between, so skip the strip.
+    if (isVideoOnly) {
+        thumbsContainer.style.display = 'none';
+        return;
+    }
+    thumbsContainer.style.display = '';
+
+    mediaList.forEach((media, index) => {
         const thumb = document.createElement(media.type === 'video' ? 'div' : 'img');
         if (media.type === 'video') {
             thumb.className = 'thumbnail video-thumb';

@@ -1192,7 +1192,7 @@ paypal-add-to-cart-button {
 
 paypal-cart-button {
     position: fixed !important;
-    top: 15px !important;
+    bottom: 15px !important;
     right: 15px !important;
     z-index: 9999 !important; /* Higher than navbar/menu */
     transform: none !important; /* Override mobile scaling */
@@ -1260,6 +1260,43 @@ paypal-cart-button {
 
 .gallery-item:hover .hover-image {
     opacity: 1;
+}
+
+/* Video-only entries (one video + one picture): no second image to swap
+   to on hover, so keep the picture fully visible instead of fading it out. */
+.gallery-item.video-only:hover .default-image {
+    opacity: 1;
+}
+
+/* Play button badge over the thumbnail of video-only entries */
+.play-button-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.play-button-icon {
+    width: 0;
+    height: 0;
+    margin-left: 4px; /* optically center the triangle */
+    border-top: 11px solid transparent;
+    border-bottom: 11px solid transparent;
+    border-left: 18px solid #ded7be;
+}
+
+.gallery-item:hover .play-button-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    transform: translate(-50%, -50%) scale(1.1);
 }
 
 .gallery-item-detail {
@@ -1485,7 +1522,7 @@ paypal-cart-button {
         transform: scale(0.7) !important;
         padding: 2px 4px !important;
         right: 2px !important;
-        top: 2px !important;
+        bottom: 2px !important;
     }
     .details-column {
         margin-top: auto ;
@@ -1541,7 +1578,7 @@ paypal-cart-button {
     transform: scale(0.7) !important;
     padding: 2px 4px !important;
     right: 2px !important;
-    top: 2px !important;
+    bottom: 2px !important;
 }
 }
 

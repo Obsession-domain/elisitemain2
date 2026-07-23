@@ -184,32 +184,9 @@
     
    ]
  },
-
-
-{
-       "id": "7",
-   "title": "Girl In Balance",
-   "year": 2024,
-   "medium": "3D Render",
-   "description": "",
-   "media": [
-     {
-       "type": "video",
-       "url": "NEED VIDEO"
-     },
-     {
-       "type": "image",
-       "url": "NEED TUMBMNAIL"
-     }
-
-
-   ]
-
-
- },
 {
        "id": "8",
-   "title": "VESSEL PATINA CAMOUFLAGE",
+   "title": "VESSEL PATINA",
    "year": 2024,
    "medium": "3D Animation",
    "description": "",
@@ -220,7 +197,7 @@
      },
      {
        "type": "image",
-       "url": "NEED THUMBNAIL"
+       "url": "https://live.staticflickr.com/65535/55414440153_e8074f32e0_c.jpg"
      }
 
 
@@ -270,7 +247,7 @@
      },
      {
        "type": "image",
-       "url": "NEED THUMBNAIL"
+       "url": "https://live.staticflickr.com/65535/55414320991_abbd6e8e19_c.jpg"
      }
 
 
@@ -292,7 +269,7 @@
      },
      {
        "type": "image",
-       "url": "NEED THUMBNAIL"
+       "url": "https://live.staticflickr.com/65535/55414639135_a05ca891ff_c.jpg"
      }
 
 
@@ -315,7 +292,7 @@
      },
      {
        "type": "image",
-       "url": "NEED THUMBNAIL"
+       "url": "https://live.staticflickr.com/65535/55413258657_19ca6f2860_b.jpg"
      }
 
 
@@ -338,7 +315,7 @@
      },
      {
        "type": "image",
-       "url": "NEED THUMBNAIL"
+       "url": "https://live.staticflickr.com/65535/55414327311_28ac4ca213_c.jpg"
      }
 
 
@@ -361,7 +338,7 @@
      },
      {
        "type": "image",
-       "url": "NEED THUMBNAIL"
+       "url": "https://live.staticflickr.com/65535/55414446073_23ffaebd06_c.jpg"
      }
 
 
@@ -384,7 +361,7 @@
      },
      {
        "type": "image",
-       "url": "NEED THUMBNAIL"
+       "url": "https://live.staticflickr.com/65535/55413356562_fc4ace7da1_c.jpg"
      }
 
 
