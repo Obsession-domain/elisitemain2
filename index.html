@@ -13,6 +13,8 @@
     <link rel="manifest" href="site.webmanifest">
 </head>
 <body>
+        <div id="detail-gradient"></div>
+
     <div id="background">
         <canvas id="boidsCanvas"></canvas>
     </div>
@@ -68,12 +70,49 @@
         </div>
         
     </main>
+    
     <script src="script.js"></script>
     <script src="
     https://cdn.jsdelivr.net/npm/gifler@0.1.0/gifler.min.js
     "></script>
-        <!!!script src="boid.js"> </!!!script>
+        <script src="boid.js"> </script>
+<script>
+        (function() {
+            const gradient = document.getElementById('detail-gradient');
 
+            // Store original functions
+            const origOpen = window.openScrollView;
+            const origClose = window.closeScrollView;
+
+            if (typeof origOpen === 'function') {
+                window.openScrollView = function(startId) {
+                    origOpen(startId);
+                    if (gradient) gradient.classList.add('active');
+                };
+            }
+
+            if (typeof origClose === 'function') {
+                window.closeScrollView = function() {
+                    origClose();
+                    if (gradient) gradient.classList.remove('active');
+                };
+            }
+
+            // Also watch for the 'scroll-view-active' class on gallery-view
+            // as a fallback in case the JS functions are redefined.
+            const galleryView = document.getElementById('gallery-view');
+            if (galleryView && gradient) {
+                const observer = new MutationObserver(() => {
+                    if (galleryView.classList.contains('scroll-view-active')) {
+                        gradient.classList.add('active');
+                    } else {
+                        gradient.classList.remove('active');
+                    }
+                });
+                observer.observe(galleryView, { attributes: true, attributeFilter: ['class'] });
+            }
+        })();
+    </script>
 
     </body>
 

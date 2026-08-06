@@ -96,14 +96,24 @@ function createGalleryItem(item) {
     galleryItem.className  = 'gallery-item';
     galleryItem.dataset.id = item.id;
 
-    const images      = item.media.filter(m => m.type === 'image');
+    const videos = item.media.filter(m => m.type === 'video');
+    const images = item.media.filter(m => m.type === 'image');
+    const isVideoOnly = typeof item.videoOnly === 'boolean'
+        ? item.videoOnly
+        : (videos.length === 1 && images.length === 1);
+
+    // Video-only entries never get a hover-swap image, so don't let the
+    // default image fade out on hover (nothing to fade in behind it).
+    if (isVideoOnly) galleryItem.classList.add('video-only');
+
     const firstImage  = images[0]?.url || '';
-    const secondImage = images[1]?.url || '';
+    const secondImage = isVideoOnly ? '' : (images[1]?.url || '');
 
     galleryItem.innerHTML = `
         <div class="image-container">
             ${firstImage  ? `<img src="${firstImage}"  alt="${item.title}" class="gallery-image default-image">` : ''}
             ${secondImage ? `<img src="${secondImage}" alt="${item.title}" class="gallery-image hover-image">` : ''}
+            ${isVideoOnly ? `<div class="play-button-overlay"><div class="play-button-icon"></div></div>` : ''}
         </div>
         <div class="text-content">
             <div class="title-year">
@@ -161,16 +171,21 @@ function createDetailCard(item) {
     wrapper.className = 'detail-card-wrapper';
 
     // Card uses exact same markup and classes as before
+    const videoCountForClass = item.media.filter(m => m.type === 'video').length;
+    const imageCountForClass = item.media.filter(m => m.type === 'image').length;
+    const isVideoOnlyForClass = typeof item.videoOnly === 'boolean'
+        ? item.videoOnly
+        : (videoCountForClass === 1 && imageCountForClass === 1);
+
     wrapper.innerHTML = `
-        <div class="gallery-item-detail">
+        <div class="gallery-item-detail${isVideoOnlyForClass ? ' video-detail' : ''}">
            <div class="details-column">
                 <div class="media-details"></div>
-                
+                <div id="paypal-card-${item.id}" class="paypal-container"></div>
             </div>
         <div class="media-column">
                 <div class="main-media-container"></div>
                 <div class="thumbnails-container"></div>
-                <div id="paypal-card-${item.id}" class="paypal-container"></div>
             </div>
             
         </div>
@@ -180,13 +195,29 @@ function createDetailCard(item) {
     const thumbsContainer = wrapper.querySelector('.thumbnails-container');
     const mediaDetails    = wrapper.querySelector('.media-details');
 
+    // ── Video-only detection ────────────────────────────────────────────
+    // Auto-detect items that have exactly one video + one picture, and
+    // treat them as "video only" in the detail view (no image, no thumb
+    // strip since there's nothing to switch between).
+    // Override per-item in gallery-items.json with "videoOnly": true/false.
+    const videoCount = item.media.filter(m => m.type === 'video').length;
+    const imageCount = item.media.filter(m => m.type === 'image').length;
+    const isVideoOnly = typeof item.videoOnly === 'boolean'
+        ? item.videoOnly
+        : (videoCount === 1 && imageCount === 1);
+
+    // The list of media this card will actually cycle through
+    const mediaList = isVideoOnly
+        ? item.media.filter(m => m.type === 'video')
+        : item.media;
+
     let currentMediaIndex = 0;
 
     function showMedia(index) {
         mainMedia.innerHTML    = '';
         mediaDetails.innerHTML = '';
 
-        const media = item.media[index];
+        const media = mediaList[index];
         if (media.type === 'video') {
     mainMedia.innerHTML = `<iframe 
         src="${media.url}" 
@@ -197,6 +228,7 @@ function createDetailCard(item) {
     </iframe>`;
 } else {
     mainMedia.innerHTML = `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
+    setupImageZoom(mainMedia);
 }
 
         mediaDetails.innerHTML = `
@@ -204,12 +236,20 @@ function createDetailCard(item) {
             <p>${item.description}</p>
         `;
 
-        updateThumbnails(index);
+        if (!isVideoOnly) updateThumbnails(index);
     }
 
     function createThumbnails() {
     thumbsContainer.innerHTML = '';
-    item.media.forEach((media, index) => {
+
+    // Video-only cards have nothing to switch between, so skip the strip.
+    if (isVideoOnly) {
+        thumbsContainer.style.display = 'none';
+        return;
+    }
+    thumbsContainer.style.display = '';
+
+    mediaList.forEach((media, index) => {
         const thumb = document.createElement(media.type === 'video' ? 'div' : 'img');
         if (media.type === 'video') {
             thumb.className = 'thumbnail video-thumb';
@@ -251,6 +291,83 @@ function createDetailCard(item) {
     }
 
     return wrapper;
+}
+
+// ─── Magnifying-Glass Zoom (desktop detail view only) ────────────────────────
+const ZOOM_FACTOR = 2.0;
+const ZOOM_LENS_SIZE = 220;
+
+// Single shared lens, appended to <body> so it's never clipped by a card's
+// overflow:hidden and always paints above every other element on the page.
+let zoomLensEl = null;
+function getZoomLens() {
+    if (!zoomLensEl) {
+        zoomLensEl = document.createElement('div');
+        zoomLensEl.className = 'zoom-lens';
+        zoomLensEl.style.width  = `${ZOOM_LENS_SIZE}px`;
+        zoomLensEl.style.height = `${ZOOM_LENS_SIZE}px`;
+        document.body.appendChild(zoomLensEl);
+    }
+    return zoomLensEl;
+}
+
+function setupImageZoom(container) {
+    // Desktop/hover-capable devices only — on touch devices there's no
+    // hover to trigger the lens, so skip entirely rather than leaving
+    // dead listeners around.
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const img = container.querySelector('.gallery-detail-image');
+    if (!img) return;
+
+    function init() {
+        const lens = getZoomLens();
+
+        function positionLens(e) {
+            // Fixed positioning is relative to the viewport, so this maps
+            // directly to the mouse coordinates — no container offset math.
+            lens.style.left = `${e.clientX - ZOOM_LENS_SIZE / 2}px`;
+            lens.style.top  = `${e.clientY - ZOOM_LENS_SIZE / 2}px`;
+
+            const imgRect = img.getBoundingClientRect();
+            const relX = e.clientX - imgRect.left;
+            const relY = e.clientY - imgRect.top;
+            const bgX  = relX * ZOOM_FACTOR - ZOOM_LENS_SIZE / 2;
+            const bgY  = relY * ZOOM_FACTOR - ZOOM_LENS_SIZE / 2;
+            lens.style.backgroundPosition = `-${bgX}px -${bgY}px`;
+        }
+
+        function showLens(e) {
+            lens.style.backgroundImage = `url("${img.currentSrc || img.src}")`;
+            lens.style.backgroundSize  = `${img.clientWidth * ZOOM_FACTOR}px ${img.clientHeight * ZOOM_FACTOR}px`;
+            positionLens(e);
+            lens.classList.add('visible');
+            container.classList.add('zoom-active');
+        }
+
+        // Rely on mousemove (not just mouseenter) to reveal the lens —
+        // if the image renders right under a cursor that hasn't moved yet
+        // (e.g. right where a click just landed), mouseenter never fires,
+        // but the very next mousemove will.
+        img.addEventListener('mousemove', (e) => {
+            if (!lens.classList.contains('visible')) {
+                showLens(e);
+            } else {
+                positionLens(e);
+            }
+        });
+
+        img.addEventListener('mouseleave', () => {
+            lens.classList.remove('visible');
+            container.classList.remove('zoom-active');
+        });
+    }
+
+    if (img.complete && img.naturalWidth > 0) {
+        init();
+    } else {
+        img.addEventListener('load', init, { once: true });
+    }
 }
 
 function closeScrollView() {

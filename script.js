@@ -171,8 +171,14 @@ function createDetailCard(item) {
     wrapper.className = 'detail-card-wrapper';
 
     // Card uses exact same markup and classes as before
+    const videoCountForClass = item.media.filter(m => m.type === 'video').length;
+    const imageCountForClass = item.media.filter(m => m.type === 'image').length;
+    const isVideoOnlyForClass = typeof item.videoOnly === 'boolean'
+        ? item.videoOnly
+        : (videoCountForClass === 1 && imageCountForClass === 1);
+
     wrapper.innerHTML = `
-        <div class="gallery-item-detail">
+        <div class="gallery-item-detail${isVideoOnlyForClass ? ' video-detail' : ''}">
            <div class="details-column">
                 <div class="media-details"></div>
                 <div id="paypal-card-${item.id}" class="paypal-container"></div>
@@ -222,6 +228,7 @@ function createDetailCard(item) {
     </iframe>`;
 } else {
     mainMedia.innerHTML = `<img src="${media.url}" alt="${item.title}" class="gallery-detail-image">`;
+    setupImageZoom(mainMedia);
 }
 
         mediaDetails.innerHTML = `
@@ -284,6 +291,83 @@ function createDetailCard(item) {
     }
 
     return wrapper;
+}
+
+// ─── Magnifying-Glass Zoom (desktop detail view only) ────────────────────────
+const ZOOM_FACTOR = 2.0;
+const ZOOM_LENS_SIZE = 220;
+
+// Single shared lens, appended to <body> so it's never clipped by a card's
+// overflow:hidden and always paints above every other element on the page.
+let zoomLensEl = null;
+function getZoomLens() {
+    if (!zoomLensEl) {
+        zoomLensEl = document.createElement('div');
+        zoomLensEl.className = 'zoom-lens';
+        zoomLensEl.style.width  = `${ZOOM_LENS_SIZE}px`;
+        zoomLensEl.style.height = `${ZOOM_LENS_SIZE}px`;
+        document.body.appendChild(zoomLensEl);
+    }
+    return zoomLensEl;
+}
+
+function setupImageZoom(container) {
+    // Desktop/hover-capable devices only — on touch devices there's no
+    // hover to trigger the lens, so skip entirely rather than leaving
+    // dead listeners around.
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const img = container.querySelector('.gallery-detail-image');
+    if (!img) return;
+
+    function init() {
+        const lens = getZoomLens();
+
+        function positionLens(e) {
+            // Fixed positioning is relative to the viewport, so this maps
+            // directly to the mouse coordinates — no container offset math.
+            lens.style.left = `${e.clientX - ZOOM_LENS_SIZE / 2}px`;
+            lens.style.top  = `${e.clientY - ZOOM_LENS_SIZE / 2}px`;
+
+            const imgRect = img.getBoundingClientRect();
+            const relX = e.clientX - imgRect.left;
+            const relY = e.clientY - imgRect.top;
+            const bgX  = relX * ZOOM_FACTOR - ZOOM_LENS_SIZE / 2;
+            const bgY  = relY * ZOOM_FACTOR - ZOOM_LENS_SIZE / 2;
+            lens.style.backgroundPosition = `-${bgX}px -${bgY}px`;
+        }
+
+        function showLens(e) {
+            lens.style.backgroundImage = `url("${img.currentSrc || img.src}")`;
+            lens.style.backgroundSize  = `${img.clientWidth * ZOOM_FACTOR}px ${img.clientHeight * ZOOM_FACTOR}px`;
+            positionLens(e);
+            lens.classList.add('visible');
+            container.classList.add('zoom-active');
+        }
+
+        // Rely on mousemove (not just mouseenter) to reveal the lens —
+        // if the image renders right under a cursor that hasn't moved yet
+        // (e.g. right where a click just landed), mouseenter never fires,
+        // but the very next mousemove will.
+        img.addEventListener('mousemove', (e) => {
+            if (!lens.classList.contains('visible')) {
+                showLens(e);
+            } else {
+                positionLens(e);
+            }
+        });
+
+        img.addEventListener('mouseleave', () => {
+            lens.classList.remove('visible');
+            container.classList.remove('zoom-active');
+        });
+    }
+
+    if (img.complete && img.naturalWidth > 0) {
+        init();
+    } else {
+        img.addEventListener('load', init, { once: true });
+    }
 }
 
 function closeScrollView() {

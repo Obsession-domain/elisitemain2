@@ -66,7 +66,7 @@ class Boid {
         this.maxSpeed     = cfg.speedMin + Math.random() * cfg.speedRange;
         this.maxForce     = cfg.maxForce;
         this.scale        = cfg.scaleMin + Math.random() * cfg.scaleRange;
-        this.flockWeight  = cfg.flockWeight;  // 0 = solo drifter, 1 = full flocking
+        this.flockWeight  = cfg.flockWeight;
         this.perceptionR  = cfg.perceptionR;
 
         this.opacity      = 0;
@@ -74,10 +74,12 @@ class Boid {
         this.fadeSpeed    = cfg.fadeSpeedMin + Math.random() * cfg.fadeSpeedRange;
         this.rotation     = Math.random() * Math.PI * 2;
         this.rotationSpeed = (Math.random() - 0.5) * cfg.rotationRange;
+
+        this.active = false;   // start inactive, spawned later
     }
 
     edges() {
-        const margin = 50;
+        const margin = 200;  // ← increased for smoother off-screen fade
         if (this.fadeState === 'visible') {
             if (this.position.x > canvas.width  - margin || this.position.x < margin ||
                 this.position.y > canvas.height - margin || this.position.y < margin) {
@@ -147,6 +149,8 @@ class Boid {
     }
 
     update() {
+        if (!this.active) return;
+
         this.position.add(this.velocity);
         this.velocity.add(this.acceleration);
         this.velocity.limit(this.maxSpeed);
@@ -159,6 +163,7 @@ class Boid {
     }
 
     draw() {
+        if (!this.active || this.opacity <= 0) return;
         if (!this.image || this.image.width === 0) return;
         ctx.save();
         ctx.globalAlpha = this.opacity;
@@ -174,35 +179,35 @@ class Boid {
 // ─── Layer Configs ───────────────────────────────────────────────────────────
 
 const BACK_CFG = {
-    // Small, faster, tight flocking — distant background organisms
-    speedMin: 0.04,   speedRange: 0.3,
+    // Numerous, tiny, fast-moving – the background swarm
+    speedMin: 0.08,   speedRange: 0.40,
     maxForce: 0.12,
-    scaleMin: 0.02,   scaleRange: 0.03,
+    scaleMin: 0.13,   scaleRange: 0.03,
     flockWeight: 1.5,
     perceptionR: 90,
     fadeSpeedMin: 0.008, fadeSpeedRange: 0.015,
-    rotationRange: 0.004,
-    count: 150,
+    rotationRange: 0.01,
+    count: 60,
 };
 
 const MIDDLE_CFG = {
-    // Medium scale, moderate speed, loose flocking
-    speedMin: 0.05,   speedRange: 0.25,
+    // Fewer boids, moderate speed, less crowded
+    speedMin: 0.04,   speedRange: 0.20,
     maxForce: 0.06,
     scaleMin: 0.13,   scaleRange: 0.09,
     flockWeight: 0.5,
     perceptionR: 120,
     fadeSpeedMin: 0.006, fadeSpeedRange: 0.012,
     rotationRange: 0.006,
-    count: 40,
+    count: 10,
 };
 
 const FRONT_CFG = {
-    // Large, very slow, pure independent drifters — no flocking
-    speedMin: 0.005,  speedRange: 0.04,
-    maxForce: 0.02,
-    scaleMin: 0.35,   scaleRange: 0.20,
-    flockWeight: 0,   // fully independent
+    // Very few, large, extremely slow – solitary drifters
+    speedMin: 0.003,  speedRange: 0.02,
+    maxForce: 0.01,
+    scaleMin: 0.55,   scaleRange: 0.20,
+    flockWeight: 0,
     perceptionR: 150,
     fadeSpeedMin: 0.003, fadeSpeedRange: 0.006,
     rotationRange: 0.002,
@@ -210,7 +215,6 @@ const FRONT_CFG = {
 };
 
 // ─── Image Sources ───────────────────────────────────────────────────────────
-// Each folder may have up to 49 images (0000–0048); missing ones are skipped via onerror
 const pad  = i => String(i).padStart(4, '0');
 const BACK_SOURCES   = Array.from({length: 49}, (_, i) => `./back/Radiolarian${pad(i)}.png`);
 const MIDDLE_SOURCES = Array.from({length: 49}, (_, i) => `./middle/Radiolarian${pad(i)}.png`);
@@ -226,25 +230,45 @@ loadImages(BACK_SOURCES, backImgs => {
 });
 
 function startAnimation(backImgs, middleImgs, frontImgs) {
-    // If a folder is empty/missing, fall back to the back layer images
     if (middleImgs.length === 0) middleImgs = backImgs;
     if (frontImgs.length  === 0) frontImgs  = backImgs;
 
+    // ── create all boids (inactive) ──
     const backLayer   = Array.from({length: BACK_CFG.count},   () => new Boid(backImgs,   BACK_CFG));
-    const middleLayer = Array.from({length: MIDDLE_CFG.count},  () => new Boid(middleImgs, MIDDLE_CFG));
-    const frontLayer  = Array.from({length: FRONT_CFG.count},   () => new Boid(frontImgs,  FRONT_CFG));
+    const middleLayer = Array.from({length: MIDDLE_CFG.count}, () => new Boid(middleImgs, MIDDLE_CFG));
+    const frontLayer  = Array.from({length: FRONT_CFG.count},  () => new Boid(frontImgs,  FRONT_CFG));
+
+    // ── combine into a single list for spawning (front → middle → back) ──
+    const allBoids = [...frontLayer, ...middleLayer, ...backLayer];
+
+    // ── spawning parameters ──
+    const SPAWN_INTERVAL = 2000;   // 2 seconds
+    const BATCH_SIZE     = 2;      // 2 boids per batch
+    let spawnIndex       = 0;
+    let spawnAccumulator = 0;
 
     let lastFrameTime = 0;
     const frameInterval = 1000 / 30;
- 
+
     function animate(currentTime) {
         if (currentTime - lastFrameTime < frameInterval) {
             requestAnimationFrame(animate);
             return;
         }
+        const deltaMs = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
 
-        // Draw background
+        // ── spawn new boids if time is up ──
+        spawnAccumulator += deltaMs;
+        if (spawnAccumulator >= SPAWN_INTERVAL && spawnIndex < allBoids.length) {
+            for (let i = 0; i < BATCH_SIZE && spawnIndex < allBoids.length; i++) {
+                allBoids[spawnIndex].active = true;
+                spawnIndex++;
+            }
+            spawnAccumulator -= SPAWN_INTERVAL;
+        }
+
+        // ── draw background ──
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = ovalGradient;
@@ -252,13 +276,18 @@ function startAnimation(backImgs, middleImgs, frontImgs) {
         ctx.ellipse(canvas.width/2, canvas.height/2, canvas.width*0.9, canvas.height*0.9, 0, 0, Math.PI*2);
         ctx.fill();
 
-        // Update & draw back → middle → front (painter's order)
+        // ── update & draw each layer (painter's order) ──
         [backLayer, middleLayer, frontLayer].forEach(layer => {
             for (let i = 0; i < layer.length; i++) {
-                if (i % 3 === 0) layer[i].flock(layer); // flock only within own layer
-                layer[i].update();
+                const boid = layer[i];
+                if (!boid.active) continue;
+                if (i % 3 === 0) boid.flock(layer);
+                boid.update();
             }
-            for (let i = 0; i < layer.length; i++) layer[i].draw();
+            for (let i = 0; i < layer.length; i++) {
+                const boid = layer[i];
+                if (boid.active) boid.draw();
+            }
         });
 
         requestAnimationFrame(animate);
