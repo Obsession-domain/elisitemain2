@@ -1,5 +1,5 @@
 const canvas = document.getElementById('boidsCanvas');
-const ctx = canvas.getContext('2d', { alpha: true });
+const ctx = canvas.getContext('2d', { alpha: false });
 ctx.imageSmoothingEnabled = false;
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -22,24 +22,45 @@ function createOvalGradient() {
 }
 createOvalGradient();
 
-// ─── Image Loader ────────────────────────────────────────────────────────────
-function loadImages(sources, callback) {
-    const loaded = [];
-    let completed = 0;
-    if (sources.length === 0) { callback(loaded); return; }
-    sources.forEach(source => {
-        const img = new Image();
-        img.onload = () => {
-            loaded.push(img);
-            if (++completed >= sources.length) callback(loaded);
-        };
-        img.onerror = () => {
-            console.warn('Failed to load image:', source);
-            if (++completed >= sources.length) callback(loaded);
-        };
-        img.src = source;
-    });
+// Background rendered once into an offscreen canvas
+const bgCanvas = document.createElement('canvas');
+const bgCtx    = bgCanvas.getContext('2d', { alpha: false });
+function renderBackground() {
+    bgCanvas.width  = canvas.width;
+    bgCanvas.height = canvas.height;
+    bgCtx.fillStyle = gradient;
+    bgCtx.fillRect(0, 0, canvas.width, canvas.height);
+    bgCtx.fillStyle = ovalGradient;
+    bgCtx.beginPath();
+    bgCtx.ellipse(canvas.width/2, canvas.height/2, canvas.width*0.9, canvas.height*0.9, 0, 0, Math.PI*2);
+    bgCtx.fill();
 }
+renderBackground();
+
+// ─── Image Cache (lazy loading) ─────────────────────────────────────────────
+const imageCache = {
+    cache: new Map(),          // url -> Image
+    loading: new Map(),        // url -> Promise
+    get(url) {
+        if (this.cache.has(url)) return Promise.resolve(this.cache.get(url));
+        if (this.loading.has(url)) return this.loading.get(url);
+        const promise = new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                this.cache.set(url, img);
+                this.loading.delete(url);
+                resolve(img);
+            };
+            img.onerror = () => {
+                this.loading.delete(url);
+                reject(new Error(`Failed to load: ${url}`));
+            };
+            img.src = url;
+        });
+        this.loading.set(url, promise);
+        return promise;
+    }
+};
 
 // ─── Vector ──────────────────────────────────────────────────────────────────
 class Vector {
@@ -57,11 +78,16 @@ class Vector {
 
 // ─── Base Boid ───────────────────────────────────────────────────────────────
 class Boid {
-    constructor(imageArray, cfg) {
+    constructor(sourceArray, cfg) {
         this.position     = new Vector(Math.random() * canvas.width, Math.random() * canvas.height);
         this.velocity     = new Vector((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 4);
         this.acceleration = new Vector();
-        this.image        = imageArray[Math.floor(Math.random() * imageArray.length)];
+
+        // Lazy loading: store the image source URL instead of an Image object
+        this.imageSrc     = sourceArray[Math.floor(Math.random() * sourceArray.length)];
+        this.image        = null;        // will be set when loaded
+        this.imageLoaded  = false;
+        this.loading      = false;
 
         this.maxSpeed     = cfg.speedMin + Math.random() * cfg.speedRange;
         this.maxForce     = cfg.maxForce;
@@ -75,11 +101,11 @@ class Boid {
         this.rotation     = Math.random() * Math.PI * 2;
         this.rotationSpeed = (Math.random() - 0.5) * cfg.rotationRange;
 
-        this.active = false;   // start inactive, spawned later
+        this.active = false;
     }
 
     edges() {
-        const margin = 200;  // ← increased for smoother off-screen fade
+        const margin = 200;
         if (this.fadeState === 'visible') {
             if (this.position.x > canvas.width  - margin || this.position.x < margin ||
                 this.position.y > canvas.height - margin || this.position.y < margin) {
@@ -95,47 +121,65 @@ class Boid {
         }
     }
 
-    steer(boids, mode) {
-        const r      = mode === 'separation' ? this.perceptionR * 0.55 : this.perceptionR;
-        let steering = new Vector();
-        let total    = 0;
-        const maxCheck = Math.min(25, boids.length);
-        for (let i = 0; i < maxCheck; i++) {
-            const other = boids[Math.floor(Math.random() * boids.length)];
-            const d     = this.position.distance(other.position);
-            if (other !== this && d < r) {
-                if (mode === 'align')      steering.add(other.velocity);
-                if (mode === 'cohesion')   steering.add(other.position);
-                if (mode === 'separation') {
-                    const diff = Vector.subtract(this.position, other.position);
-                    diff.divide(d * d);
-                    steering.add(diff);
-                }
-                total++;
-            }
+    _applySteer(sx, sy, weight) {
+        let mag = Math.sqrt(sx * sx + sy * sy);
+        if (mag === 0) return;
+        sx = (sx / mag) * this.maxSpeed;
+        sy = (sy / mag) * this.maxSpeed;
+        sx -= this.velocity.x;
+        sy -= this.velocity.y;
+        mag = Math.sqrt(sx * sx + sy * sy);
+        if (mag > this.maxForce) {
+            sx = (sx / mag) * this.maxForce;
+            sy = (sy / mag) * this.maxForce;
         }
-        if (total > 0) {
-            steering.divide(total);
-            if (mode === 'cohesion') steering.subtract(this.position);
-            steering.normalize();
-            steering.multiply(this.maxSpeed);
-            steering.subtract(this.velocity);
-            steering.limit(this.maxForce);
-        }
-        return steering;
+        this.acceleration.x += sx * weight;
+        this.acceleration.y += sy * weight;
     }
 
     flock(boids) {
         if (this.flockWeight === 0) return;
-        const a = this.steer(boids, 'align');
-        const c = this.steer(boids, 'cohesion');
-        const s = this.steer(boids, 'separation');
-        a.multiply(this.flockWeight);
-        c.multiply(this.flockWeight);
-        s.multiply(this.flockWeight);
-        this.acceleration.add(a);
-        this.acceleration.add(c);
-        this.acceleration.add(s);
+
+        const r      = this.perceptionR;
+        const rSq    = r * r;
+        const sepR   = r * 0.55;
+        const sepRSq = sepR * sepR;
+
+        let alignX = 0, alignY = 0, alignTotal = 0;
+        let cohX   = 0, cohY   = 0, cohTotal   = 0;
+        let sepX   = 0, sepY   = 0, sepTotal   = 0;
+
+        const maxCheck = Math.min(25, boids.length);
+        for (let i = 0; i < maxCheck; i++) {
+            const other = boids[Math.floor(Math.random() * boids.length)];
+            if (other === this) continue;
+
+            const dx = other.position.x - this.position.x;
+            const dy = other.position.y - this.position.y;
+            const distSq = dx * dx + dy * dy;
+
+            if (distSq < rSq) {
+                alignX += other.velocity.x; alignY += other.velocity.y; alignTotal++;
+                cohX   += other.position.x; cohY   += other.position.y; cohTotal++;
+            }
+            if (distSq < sepRSq && distSq > 0) {
+                sepX -= dx / distSq; sepY -= dy / distSq; sepTotal++;
+            }
+        }
+
+        if (alignTotal > 0) {
+            this._applySteer(alignX / alignTotal, alignY / alignTotal, this.flockWeight);
+        }
+        if (cohTotal > 0) {
+            this._applySteer(
+                (cohX / cohTotal) - this.position.x,
+                (cohY / cohTotal) - this.position.y,
+                this.flockWeight
+            );
+        }
+        if (sepTotal > 0) {
+            this._applySteer(sepX / sepTotal, sepY / sepTotal, this.flockWeight);
+        }
     }
 
     updateFade() {
@@ -162,54 +206,83 @@ class Boid {
         this.edges();
     }
 
-    draw() {
+    draw(zoom = 1, cx = 0, cy = 0) {
         if (!this.active || this.opacity <= 0) return;
-        if (!this.image || this.image.width === 0) return;
-        ctx.save();
+
+        // If image not loaded yet, trigger a load and draw a placeholder
+        if (!this.imageLoaded && !this.loading) {
+            this.loading = true;
+            imageCache.get(this.imageSrc)
+                .then(img => {
+                    this.image = img;
+                    this.imageLoaded = true;
+                    this.loading = false;
+                })
+                .catch(() => {
+                    this.loading = false; // will retry on next draw
+                });
+        }
+
+        const px = zoom * this.position.x + cx * (1 - zoom);
+        const py = zoom * this.position.y + cy * (1 - zoom);
+
+        // Placeholder while loading (or if load failed)
+        if (!this.imageLoaded) {
+            ctx.globalAlpha = this.opacity;
+            const size = 24 * this.scale * zoom; // approximate size
+            ctx.setTransform(1, 0, 0, 1, px, py);
+            ctx.fillStyle = 'rgba(180, 180, 180, 0.6)';
+            ctx.beginPath();
+            ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.globalAlpha = 1;
+            return;
+        }
+
+        // Image is ready – draw it
+        const w = this.image.width  * this.scale * zoom;
+        const h = this.image.height * this.scale * zoom;
+        const cos = Math.cos(this.rotation);
+        const sin = Math.sin(this.rotation);
         ctx.globalAlpha = this.opacity;
-        const w = this.image.width  * this.scale;
-        const h = this.image.height * this.scale;
-        ctx.translate(this.position.x, this.position.y);
-        ctx.rotate(this.rotation);
+        ctx.setTransform(cos, sin, -sin, cos, px, py);
         ctx.drawImage(this.image, -w / 2, -h / 2, w, h);
-        ctx.restore();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalAlpha = 1;
     }
 }
 
 // ─── Layer Configs ───────────────────────────────────────────────────────────
-
 const BACK_CFG = {
-    // Numerous, tiny, fast-moving – the background swarm
-    speedMin: 0.08,   speedRange: 0.40,
-    maxForce: 0.12,
-    scaleMin: 0.13,   scaleRange: 0.03,
+    speedMin: 0.018,  speedRange: 0.09,
+    maxForce: 0.05,
+    scaleMin: 0.07,   scaleRange: 0.015,
     flockWeight: 1.5,
     perceptionR: 90,
-    fadeSpeedMin: 0.008, fadeSpeedRange: 0.015,
+    fadeSpeedMin: 0.0004, fadeSpeedRange: 0.0007,
     rotationRange: 0.01,
     count: 60,
 };
 
 const MIDDLE_CFG = {
-    // Fewer boids, moderate speed, less crowded
-    speedMin: 0.04,   speedRange: 0.20,
-    maxForce: 0.06,
-    scaleMin: 0.13,   scaleRange: 0.09,
+    speedMin: 0.009,  speedRange: 0.045,
+    maxForce: 0.025,
+    scaleMin: 0.07,   scaleRange: 0.045,
     flockWeight: 0.5,
     perceptionR: 120,
-    fadeSpeedMin: 0.006, fadeSpeedRange: 0.012,
+    fadeSpeedMin: 0.0003, fadeSpeedRange: 0.0006,
     rotationRange: 0.006,
     count: 10,
 };
 
 const FRONT_CFG = {
-    // Very few, large, extremely slow – solitary drifters
-    speedMin: 0.003,  speedRange: 0.02,
-    maxForce: 0.01,
-    scaleMin: 0.55,   scaleRange: 0.20,
+    speedMin: 0.0007, speedRange: 0.004,
+    maxForce: 0.005,
+    scaleMin: 0.30,   scaleRange: 0.10,
     flockWeight: 0,
     perceptionR: 150,
-    fadeSpeedMin: 0.003, fadeSpeedRange: 0.006,
+    fadeSpeedMin: 0.0002, fadeSpeedRange: 0.0004,
     rotationRange: 0.002,
     count: 4,
 };
@@ -220,37 +293,40 @@ const BACK_SOURCES   = Array.from({length: 49}, (_, i) => `./back/Radiolarian${p
 const MIDDLE_SOURCES = Array.from({length: 49}, (_, i) => `./middle/Radiolarian${pad(i)}.png`);
 const FRONT_SOURCES  = Array.from({length: 49}, (_, i) => `./front/Radiolarian${pad(i)}.png`);
 
-// ─── Bootstrap: chain-load all three layers ──────────────────────────────────
-loadImages(BACK_SOURCES, backImgs => {
-    loadImages(MIDDLE_SOURCES, middleImgs => {
-        loadImages(FRONT_SOURCES, frontImgs => {
-            startAnimation(backImgs, middleImgs, frontImgs);
-        });
-    });
-});
+// ─── Start Animation (no preloading) ────────────────────────────────────────
+startAnimation(BACK_SOURCES, MIDDLE_SOURCES, FRONT_SOURCES);
 
-function startAnimation(backImgs, middleImgs, frontImgs) {
-    if (middleImgs.length === 0) middleImgs = backImgs;
-    if (frontImgs.length  === 0) frontImgs  = backImgs;
+function startAnimation(backSources, middleSources, frontSources) {
+    // ── create all boids (inactive) – each picks a source URL ──
+    const backLayer   = Array.from({length: BACK_CFG.count},   () => new Boid(backSources,   BACK_CFG));
+    const middleLayer = Array.from({length: MIDDLE_CFG.count}, () => new Boid(middleSources, MIDDLE_CFG));
+    const frontLayer  = Array.from({length: FRONT_CFG.count},  () => new Boid(frontSources,  FRONT_CFG));
 
-    // ── create all boids (inactive) ──
-    const backLayer   = Array.from({length: BACK_CFG.count},   () => new Boid(backImgs,   BACK_CFG));
-    const middleLayer = Array.from({length: MIDDLE_CFG.count}, () => new Boid(middleImgs, MIDDLE_CFG));
-    const frontLayer  = Array.from({length: FRONT_CFG.count},  () => new Boid(frontImgs,  FRONT_CFG));
-
-    // ── combine into a single list for spawning (front → middle → back) ──
     const allBoids = [...frontLayer, ...middleLayer, ...backLayer];
 
-    // ── spawning parameters ──
-    const SPAWN_INTERVAL = 2000;   // 2 seconds
-    const BATCH_SIZE     = 2;      // 2 boids per batch
+    const SPAWN_INTERVAL = 2000;
+    const BATCH_SIZE     = 2;
     let spawnIndex       = 0;
     let spawnAccumulator = 0;
 
     let lastFrameTime = 0;
     const frameInterval = 1000 / 30;
 
+    const ZOOM_CYCLE_MS = 75000;
+    const ZOOM_AMPLITUDE = { back: 0.03, middle: 0.09, front: 0.22 };
+
+    let animationPaused = false;
+    document.addEventListener('visibilitychange', () => {
+        animationPaused = document.hidden;
+        if (!animationPaused) {
+            lastFrameTime = 0;
+            requestAnimationFrame(animate);
+        }
+    });
+
     function animate(currentTime) {
+        if (animationPaused) return;
+
         if (currentTime - lastFrameTime < frameInterval) {
             requestAnimationFrame(animate);
             return;
@@ -258,7 +334,7 @@ function startAnimation(backImgs, middleImgs, frontImgs) {
         const deltaMs = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
 
-        // ── spawn new boids if time is up ──
+        // spawn new boids
         spawnAccumulator += deltaMs;
         if (spawnAccumulator >= SPAWN_INTERVAL && spawnIndex < allBoids.length) {
             for (let i = 0; i < BATCH_SIZE && spawnIndex < allBoids.length; i++) {
@@ -268,37 +344,46 @@ function startAnimation(backImgs, middleImgs, frontImgs) {
             spawnAccumulator -= SPAWN_INTERVAL;
         }
 
-        // ── draw background ──
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = ovalGradient;
-        ctx.beginPath();
-        ctx.ellipse(canvas.width/2, canvas.height/2, canvas.width*0.9, canvas.height*0.9, 0, 0, Math.PI*2);
-        ctx.fill();
+        // draw background
+        ctx.drawImage(bgCanvas, 0, 0);
 
-        // ── update & draw each layer (painter's order) ──
-        [backLayer, middleLayer, frontLayer].forEach(layer => {
-            for (let i = 0; i < layer.length; i++) {
-                const boid = layer[i];
-                if (!boid.active) continue;
-                if (i % 3 === 0) boid.flock(layer);
-                boid.update();
-            }
-            for (let i = 0; i < layer.length; i++) {
-                const boid = layer[i];
-                if (boid.active) boid.draw();
-            }
-        });
+        const breathe = Math.sin((currentTime / ZOOM_CYCLE_MS) * Math.PI * 2);
+        const cx = canvas.width / 2, cy = canvas.height / 2;
+        const zoomBack   = 1 + ZOOM_AMPLITUDE.back   * breathe;
+        const zoomMiddle = 1 + ZOOM_AMPLITUDE.middle * breathe;
+        const zoomFront  = 1 + ZOOM_AMPLITUDE.front  * breathe;
+
+        updateAndDrawLayer(backLayer,   zoomBack,   cx, cy);
+        updateAndDrawLayer(middleLayer, zoomMiddle, cx, cy);
+        updateAndDrawLayer(frontLayer,  zoomFront,  cx, cy);
 
         requestAnimationFrame(animate);
+    }
+
+    function updateAndDrawLayer(layer, zoom, cx, cy) {
+        for (let i = 0; i < layer.length; i++) {
+            const boid = layer[i];
+            if (!boid.active) continue;
+            if (i % 3 === 0) boid.flock(layer);
+            boid.update();
+        }
+        for (let i = 0; i < layer.length; i++) {
+            const boid = layer[i];
+            if (boid.active) boid.draw(zoom, cx, cy);
+        }
     }
 
     animate(0);
 }
 
 // ─── Resize ──────────────────────────────────────────────────────────────────
+let resizeTimeout;
 window.addEventListener('resize', () => {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    createOvalGradient();
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        createOvalGradient();
+        renderBackground();
+    }, 150);
 });

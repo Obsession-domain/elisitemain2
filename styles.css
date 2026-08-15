@@ -87,7 +87,6 @@ h3 {
 }
 
 
-
 .social-links {
     display: flex;
     flex-direction: column;
@@ -103,6 +102,7 @@ h3 {
     padding: 1rem;
     background-color: rgba(0, 0, 0, 0.001);
     border-radius: 5px;
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     text-decoration: none;
     color: #DED7BE;
@@ -119,16 +119,6 @@ h3 {
 }
 
 
-
-
-
-
-
-
-
-
-
-
 .icon {
     font-size: 1.8rem;
     width: 40px;
@@ -142,6 +132,7 @@ h3 {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+
     .about-logo {
         max-width: 400px;
     }
@@ -156,9 +147,121 @@ h3 {
     .social-button {
         padding: 1rem;
     }
+
+#detail-gradient {
+                background: radial-gradient(ellipse at center,
+                        rgb(0, 0, 0) 60%,
+                        rgba(0, 0, 0, 0) 100%);
+            }
+
+.gallery-view.scroll-view-active {
+        margin-top: 50px;
+        padding: 12px;
+    }
+
+    .scroll-view-stack {
+        gap: 24px;
+    }
+
+:root {
+        --detail-card-width: min(600px, 94vw);
+        --detail-media-height: min(50vh, 420px);
+    }
+
+    .top-controls {
+        display: none !important;
+    }
+
+    .gallery-view.detail-view-active {
+        margin-top: 60px;
+        padding: 10px;
+    }
+    .paypal-detail-container {
+        margin-bottom: 100px;
+    }
+    .navbar {
+        width: 90%;
+        top: 5px;
+        padding: 5px;
+    }
+
+    .home-button {
+        font-size: 1.4rem;
+    }
+
+    .galleryshop-button {
+        font-size: 1.2rem;
+        margin: 0 3px;
+    }
+
+    .gallery-view.large .gallery-container {
+        grid-template-columns: repeat(2, minmax(200px, 1fr));
+        max-width: 1200px; /* Optional: constrain maximum width */
+        margin: 0 auto; /* Center the grid */
+    }
+
+    .gallery-item {
+        margin: 0px;
+    }
+
+    .gallery-item:hover {
+        scale: 1.02;
+    }
+
+    .gallery-view.large .gallery-item:hover {
+        transform: scale(1.5);
+    }
+
+    .menu-toggle {
+        font-size: 1rem;
+        padding: 5px 8px;
+    }
+
+    .menu-toggle:hover {
+        transform: scale(1.2);
+    }
+
+    .item-description {
+        -webkit-line-clamp: 3;
+    }
+    
+    paypal-cart-button {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+        transform: scale(0.7) !important;
+        padding: 2px 4px !important;
+        right: 2px !important;
+        bottom: 2px !important;
+    }
+    .details-column {
+        margin-top: auto ;
+
+    }
+
+.main-media-container {
+        width: 100% !important;
+    }
+
+    /* Video-only detail cards: the media box has a fixed height
+       (--detail-media-height), but the iframe is capped to 16:9 and
+       max-width:100%. On narrow phones that makes the rendered video
+       shorter than the box, and since the box centers its content that
+       shortfall shows up as empty space above/below the video. Let the
+       box shrink to the video's actual rendered size instead of a fixed
+       height so there's no leftover gap. */
+    .gallery-item-detail.video-detail .main-media-container {
+        height: auto;
+    }
+    .gallery-item-detail.video-detail iframe.gallery-detail-media {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        max-height: none;
+    }
 }
 
 @media (max-width: 480px) {
+
     .about-logo {
         max-width: 300px;
     }
@@ -173,6 +276,60 @@ h3 {
     .social-links {
         width: 100%;
     }
+
+#detail-gradient {
+                background: radial-gradient(ellipse at center,
+                        rgb(0, 0, 0) 60%,
+                        rgba(0, 0, 0, 0) 100%);
+            }
+
+.gallery-view.large .gallery-container {
+        grid-template-columns: repeat(2, minmax(100px, 1fr));
+        max-width: 1200px; /* Optional: constrain maximum width */
+        margin: 0 auto; /* Center the grid */
+    }
+    .navbar {
+        width: 95%;
+        top: 5px;
+    }
+
+    .home-button {
+        font-size: 1.2rem;
+    }
+
+    .galleryshop-button {
+        font-size: 1.2rem;
+    }
+
+    .gallery-item {
+        margin: 0px;
+    }
+
+    .image-container {
+        height: 150px;
+    }
+
+    .media-details h3 {
+        font-size: 1.2rem;
+        margin-top: 0px;
+    }
+
+    .media-details p {
+        font-size: 0.9rem;
+    }
+
+    .dropdown-menu {
+        width: 200px;
+    }
+    /* Add this to the 480px media query */
+paypal-cart-button {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    transform: scale(0.7) !important;
+    padding: 2px 4px !important;
+    right: 2px !important;
+    bottom: 2px !important;
+}
 }
 
 /* Moved menu toggle outside navbar */
@@ -377,7 +534,6 @@ h3 {
     color: #DED7BE;
     font-size: 3rem;
     cursor: pointer;
-    transition: color 1.0s ease;
     letter-spacing: -0.05em;
     font-weight: light;
     transition: all 0.4s ease;
@@ -402,6 +558,7 @@ h3 {
     top: 10px; /* Adjusted positioning */
     left: 10px;
     background-color: rgba(0, 0, 0, 0.001);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     color: #DED7BE;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
@@ -434,11 +591,6 @@ h3 {
     text-indent: -9999px;
     color: transparent;
 }
-
-
-
-
-
 
 
 /* Added styles for the dropdown search */
@@ -533,6 +685,7 @@ h3 {
 .gallery-item {
 
     background-color: rgba(0, 0, 0, 0.001);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     color: #DED7BE;
     border-radius: 5px;
@@ -546,7 +699,6 @@ h3 {
 .gallery-item:hover {
 scale: 1.03;
 }
-
 
 
 .close-detail {
@@ -590,6 +742,7 @@ scale: 1.03;
     width: 90%; /* Full width */
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.001);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-radius: 5px;
     overflow: hidden;
@@ -728,6 +881,7 @@ scale: 1.03;
     display: flex; /* Use flexbox for layout */
     align-items: center; /* Aligns items vertically */
     background-color: rgba(0, 0, 0, 0.001);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
         color: #DED7BE; /* Text color */
     border-radius: 5px; /* Rounded corners */
@@ -783,9 +937,7 @@ scale: 1.03;
 }
   
  
-.gallery-image,
-.gallery-detail-image,
-.gallery-detail-media { /* Handles both images and videos */
+.gallery-image { /* Handles gallery grid thumbnails */
     max-width: 100%;
     height: auto;
     display: block;
@@ -811,6 +963,7 @@ scale: 1.03;
     gap: 0;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.001);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.323);
@@ -846,6 +999,7 @@ scale: 1.03;
 }
 
 .gallery-item-detail .main-media-container {
+    position: relative;
     width: 100%;
     height: var(--detail-media-height);
     display: flex;
@@ -868,6 +1022,7 @@ scale: 1.03;
     height: auto;
     max-width: 100%;
     max-height: 100%;
+    border-radius: 5px;
 }
 
 /* Thumbnails: fixed spacing above, never affects what's below */
@@ -913,23 +1068,10 @@ scale: 1.03;
 }
 
 
-
-
-
 /* Scale PayPal container */
 .gallery-item-detail .paypal-detail-container {
     max-width: 100%;
 }
-
-.main-media-container {
-    position: relative;
-    width: 100%;
-    background: #00000000;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-
 
 .gallery-item-detail p {
     margin: 3px 0; /* Reduced from 5px */
@@ -949,24 +1091,8 @@ scale: 1.03;
 }
 
 
-
-
 .gallery-item-detail img {
     box-sizing: border-box;
-}
-
-.gallery-detail-image,
-.gallery-detail-media {
-    position: relative;
-    top: auto;
-    left: auto;
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    margin: auto;
-    display: block;
 }
 
 /* iframes (YouTube) need explicit dimensions — they have no intrinsic size.
@@ -1021,8 +1147,22 @@ iframe.gallery-detail-media {
    NOT width-based: a narrow desktop browser window still has a mouse
    and should still get the zoom. */
 @media (hover: none) {
+
     .zoom-lens {
         display: none !important;
+    }
+
+.gallery-item:hover {
+        transform: none;
+        scale: 1;
+    }
+    
+    .gallery-image.hover-image {
+        display: none;
+    }
+    
+    .gallery-image.default-image {
+        opacity: 1 !important;
     }
 }
 .gallery-item-detail * {
@@ -1105,7 +1245,7 @@ iframe.gallery-detail-media {
   @keyframes rainbow {
     0% {
 
-      background-color: #0dff0062;
+      background-color: #0dff00;
     }
     2% {
         background-color: #ffff003e;
@@ -1191,8 +1331,36 @@ iframe.gallery-detail-media {
   }
 
 
+  @keyframes borderRainbowFade {
+    0% {
+      box-shadow: 0 0 0 0.5px rgba(255, 0, 13, 0.367);
+    }
+    2% {
+      box-shadow: 0 0 0 0.5px rgba(162, 0, 255, 0.075);
+    }
+    3% {
+      box-shadow: 0 0 0 0.5px rgba(119, 151, 255, 0.105);
+    }
+    5% {
+      box-shadow: 0 0 0 0.5px rgba(141, 255, 133, 0.175);
+    }
+    10% {
+      box-shadow: 0 0 0 0.5px rgba(255, 238, 176, 0.175);
+    }
+    20% {
+      box-shadow: 0 0 0 0.5px rgba(241, 206, 255, 0.175);
+    }
+    30% {
+      box-shadow: 0 0 0 0.5px rgba(206, 255, 248, 0.15);
+    }
+    100% {
+      box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.224);
+    }
+  }
+
   .gallery-item {
-    animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards,
+               borderRainbowFade 8s ease forwards;
     opacity: 0;
   }
 
@@ -1208,7 +1376,6 @@ iframe.gallery-detail-media {
 .gallery-item:nth-child(10) { animation-delay: 0.89s; }
 .gallery-item:nth-child(11) { animation-delay: 1.44s; }
 .gallery-item:nth-child(12) { animation-delay: 2.33s; }
-
 
 
 .paypal-detail-container {
@@ -1248,7 +1415,6 @@ paypal-cart-button {
     height: auto;
     display: block;
     margin: 0 auto;
-    transition: filter 0.5s ease;
     transition: all 0.4s ease;
   transform-origin: top;
 
@@ -1521,200 +1687,12 @@ paypal-cart-button {
         }
 
         /* ── Responsive: soften gradient on narrow screens ── */
-        @media (max-width: 768px) {
-            #detail-gradient {
-                background: radial-gradient(ellipse at center,
-                        rgb(0, 0, 0) 60%,
-                        rgba(0, 0, 0, 0) 100%);
-            }
-        }
+        
 
-        @media (max-width: 480px) {
-            #detail-gradient {
-                background: radial-gradient(ellipse at center,
-                        rgb(0, 0, 0) 60%,
-                        rgba(0, 0, 0, 0) 100%);
-            }
-        }
+        
 
-@media (max-width: 768px) {
-    .gallery-view.scroll-view-active {
-        margin-top: 50px;
-        padding: 12px;
-    }
-
-    .scroll-view-stack {
-        gap: 24px;
-    }
-}
-@media (max-width: 768px) {
-    :root {
-        --detail-card-width: min(600px, 94vw);
-        --detail-media-height: min(50vh, 420px);
-    }
-
-    .top-controls {
-        display: none !important;
-    }
-
-    .gallery-view.detail-view-active {
-        margin-top: 60px;
-        padding: 10px;
-    }
-    .paypal-detail-container {
-        margin-bottom: 100px;
-    }
-    .navbar {
-        width: 90%;
-        top: 5px;
-        padding: 5px;
-    }
-
-    .home-button {
-        font-size: 1.4rem;
-    }
-
-    .galleryshop-button {
-        font-size: 1.2rem;
-        margin: 0 3px;
-    }
-
-    .gallery-view.large .gallery-container {
-        grid-template-columns: repeat(2, minmax(200px, 1fr));
-        max-width: 1200px; /* Optional: constrain maximum width */
-        margin: 0 auto; /* Center the grid */
-    }
-
-    .gallery-item {
-        margin: 0px;
-    }
-
-    .gallery-item:hover {
-        scale: 1.02;
-    }
-
-    .gallery-view.large .gallery-item:hover {
-        transform: scale(1.5);
-    }
-
-    .menu-toggle {
-        font-size: 1rem;
-        padding: 5px 8px;
-    }
-
-    .menu-toggle:hover {
-        transform: scale(1.2);
-    }
-
-    .item-description {
-        -webkit-line-clamp: 3;
-    }
-    
-    paypal-cart-button {
-        font-size: 0.7rem;
-        padding: 3px 6px;
-        transform: scale(0.7) !important;
-        padding: 2px 4px !important;
-        right: 2px !important;
-        bottom: 2px !important;
-    }
-    .details-column {
-        margin-top: auto ;
-
-    }
-}
-
-@media (max-width: 480px) {
-    
-    
-    .gallery-view.large .gallery-container {
-        grid-template-columns: repeat(2, minmax(100px, 1fr));
-        max-width: 1200px; /* Optional: constrain maximum width */
-        margin: 0 auto; /* Center the grid */
-    }
-    .navbar {
-        width: 95%;
-        top: 5px;
-    }
-
-    .home-button {
-        font-size: 1.2rem;
-    }
-
-    .galleryshop-button {
-        font-size: 1.2rem;
-    }
-
-    .gallery-item {
-        margin: 0px;
-    }
-
-    .image-container {
-        height: 150px;
-    }
-
-    .media-details h3 {
-        font-size: 1.2rem;
-        margin-top: 0px;
-    }
-
-    .media-details p {
-        font-size: 0.9rem;
-    }
-
-    .dropdown-menu {
-        width: 200px;
-    }
-    /* Add this to the 480px media query */
-paypal-cart-button {
-    font-size: 0.7rem;
-    padding: 3px 6px;
-    transform: scale(0.7) !important;
-    padding: 2px 4px !important;
-    right: 2px !important;
-    bottom: 2px !important;
-}
-}
 
 /* Fix hover states for mobile */
-@media (hover: none) {
-    .gallery-item:hover {
-        transform: none;
-        scale: 1;
-    }
-    
-    .gallery-image.hover-image {
-        display: none;
-    }
-    
-    .gallery-image.default-image {
-        opacity: 1 !important;
-    }
-}
-
-
-@media (max-width: 768px) {
-    .main-media-container {
-        width: 100% !important;
-    }
-
-    /* Video-only detail cards: the media box has a fixed height
-       (--detail-media-height), but the iframe is capped to 16:9 and
-       max-width:100%. On narrow phones that makes the rendered video
-       shorter than the box, and since the box centers its content that
-       shortfall shows up as empty space above/below the video. Let the
-       box shrink to the video's actual rendered size instead of a fixed
-       height so there's no leftover gap. */
-    .gallery-item-detail.video-detail .main-media-container {
-        height: auto;
-    }
-    .gallery-item-detail.video-detail iframe.gallery-detail-media {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16 / 9;
-        max-height: none;
-    }
-}
 
 
 .scroll-view-stack .gallery-item-detail .details-column {

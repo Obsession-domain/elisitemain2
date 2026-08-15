@@ -142,7 +142,56 @@
    ]
 
 
+  },
+
+  {
+   "id": "8",
+   "title": "VOLVELLE FACSIMILE",
+   "year": 2025,
+   "medium": "3D Replica",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55446294087_4eda29f05b_c.jpg"
+     },
+{
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55446294082_e2f117d174_c.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55447255641_ba8143da99_c.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55447423059_61072a1f1c_c.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55447715294_d6da2e9203_c.jpg"
+     },
+      {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55447715679_67167370db_c.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55446595712_de07040394_c.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55447558171_e332624fba_c.jpg"
+     }
+
+
+
+
+   ]
+
+
   }
+  
 ]
 
 
