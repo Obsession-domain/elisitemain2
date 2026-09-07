@@ -1752,18 +1752,29 @@ aspect-ratio: 1 / 1.1;
         display: block;
     }
 
-    
-}
-@media (max-width: 480px) {
-    .search-close,
-    .search-close-button,
-    .close-search,
-    #search-close,
-    #close-search {
-        width: 28px !important;
-        height: 28px !important;
-        padding: 4px !important;
-        font-size: 14px !important;
-        transform: scale(0.7);
+    /* ─── Make item title smaller on mobile ─── */
+    .gallery-item .item-title,
+    h3.item-title {
+        font-size: 0.85rem !important;
+        margin-bottom: 2px;
+        line-height: 1.2;
     }
+
+    /* Also ensure the description stays compact */
+    .gallery-view.large .gallery-item .item-description {
+        -webkit-line-clamp: 1;
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+
+    /* Hide year/medium on mobile to save space */
+    .gallery-view.large .gallery-item .item-year,
+    .gallery-view.large .gallery-item .item-medium {
+        display: none;
+    }
+
+   
+  
+   
+   
 }
