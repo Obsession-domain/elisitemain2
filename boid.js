@@ -5,35 +5,52 @@ canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // ─── Background Gradients ────────────────────────────────────────────────────
-const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-gradient.addColorStop(0,   'rgb(19, 20, 20)');
-gradient.addColorStop(0.2, 'rgb(0, 0, 0)');
-gradient.addColorStop(0.9, 'rgb(0, 0, 0)');
-gradient.addColorStop(1,   'rgb(27, 28, 24)');
+// Mobile renders the background at reduced resolution and with a cheaper
+// (fewer-stop, no radial oval) gradient, since this is purely decorative
+// and the extra fidelity isn't visible on a small screen.
+const IS_MOBILE = window.innerWidth < 768;
+const BG_RES_SCALE = IS_MOBILE ? 0.5 : 1;
+
+// Background rendered once into an offscreen canvas (at reduced size on mobile,
+// then scaled up when blitted onto the main canvas each frame).
+const bgCanvas = document.createElement('canvas');
+const bgCtx    = bgCanvas.getContext('2d', { alpha: false });
 
 let ovalGradient;
 function createOvalGradient() {
-    const cx = canvas.width / 2, cy = canvas.height / 2;
-    const rx = canvas.width * 0.6, ry = canvas.height * 0.35;
-    ovalGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+    if (IS_MOBILE) { ovalGradient = null; return; }
+    const cx = bgCanvas.width / 2, cy = bgCanvas.height / 2;
+    const rx = bgCanvas.width * 0.6, ry = bgCanvas.height * 0.35;
+    ovalGradient = bgCtx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
     ovalGradient.addColorStop(0,   'rgba(7, 8, 8, 0.88)');
     ovalGradient.addColorStop(0.7, 'rgba(6, 2, 32, 0.07)');
     ovalGradient.addColorStop(1,   'rgba(0, 0, 0, 0)');
 }
-createOvalGradient();
 
-// Background rendered once into an offscreen canvas
-const bgCanvas = document.createElement('canvas');
-const bgCtx    = bgCanvas.getContext('2d', { alpha: false });
 function renderBackground() {
-    bgCanvas.width  = canvas.width;
-    bgCanvas.height = canvas.height;
-    bgCtx.fillStyle = gradient;
-    bgCtx.fillRect(0, 0, canvas.width, canvas.height);
-    bgCtx.fillStyle = ovalGradient;
-    bgCtx.beginPath();
-    bgCtx.ellipse(canvas.width/2, canvas.height/2, canvas.width*0.9, canvas.height*0.9, 0, 0, Math.PI*2);
-    bgCtx.fill();
+    bgCanvas.width  = Math.max(1, Math.round(canvas.width  * BG_RES_SCALE));
+    bgCanvas.height = Math.max(1, Math.round(canvas.height * BG_RES_SCALE));
+
+    const linearGradient = bgCtx.createLinearGradient(0, 0, bgCanvas.width, bgCanvas.height);
+    linearGradient.addColorStop(0, 'rgb(19, 20, 20)');
+    // Mobile uses 2 fewer stops - cheaper to build and interpolate.
+    if (!IS_MOBILE) linearGradient.addColorStop(0.2, 'rgb(0, 0, 0)');
+    linearGradient.addColorStop(IS_MOBILE ? 0.5 : 0.9, 'rgb(0, 0, 0)');
+    linearGradient.addColorStop(1, 'rgb(27, 28, 24)');
+
+    bgCtx.fillStyle = linearGradient;
+    bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+    // Skip the radial oval vignette on mobile entirely - it's the most
+    // expensive part of the background to compute and least noticeable
+    // on a small screen.
+    if (!IS_MOBILE) {
+        createOvalGradient();
+        bgCtx.fillStyle = ovalGradient;
+        bgCtx.beginPath();
+        bgCtx.ellipse(bgCanvas.width/2, bgCanvas.height/2, bgCanvas.width*0.9, bgCanvas.height*0.9, 0, 0, Math.PI*2);
+        bgCtx.fill();
+    }
 }
 renderBackground();
 
@@ -267,40 +284,46 @@ this.firstSpawn = true;
 // decorative, so it runs fewer boids there — cheaper to update, flock,
 // and draw every frame, with barely any visible difference in a
 // background element on a small screen.
-const IS_MOBILE = window.innerWidth < 768;
-const MOBILE_COUNT_SCALE = 0.5;
+const MOBILE_COUNT_SCALE = 0.35; // fewer boids spawned on mobile
+const MOBILE_SIZE_SCALE  = 0.7;  // and each one drawn smaller
+
+// desktop count -> mobile count, with a small floor so thin layers don't vanish
+const mobileCount = (desktopCount, floor = 2) =>
+    IS_MOBILE ? Math.max(floor, Math.round(desktopCount * MOBILE_COUNT_SCALE)) : desktopCount;
+// shrink a layer's scale range on mobile
+const mobileScale = v => IS_MOBILE ? v * MOBILE_SIZE_SCALE : v;
 
 const BACK_CFG = {
      speedMin: 0.0007, speedRange: 0.004,
     maxForce: 0.0005,
-    scaleMin: 0.50,   scaleRange: 0.05,
+    scaleMin: mobileScale(0.50),   scaleRange: mobileScale(0.05),
     flockWeight: 0,
     perceptionR: 150,
     fadeSpeedMin: 0.0002, fadeSpeedRange: 0.0004,
     rotationRange: 0.002,
-    count: IS_MOBILE ? Math.max(7, Math.round(4 * MOBILE_COUNT_SCALE)) : 9,
+    count: mobileCount(9, 3),
 };
 
 const MIDDLE_CFG = {
     speedMin: 0.006,  speedRange: 0.045,
     maxForce: 0.005,
-    scaleMin: 0.15,   scaleRange: 0.045,
+    scaleMin: mobileScale(0.15),   scaleRange: mobileScale(0.045),
     flockWeight: 0.5,
     perceptionR: 120,
     fadeSpeedMin: 0.0003, fadeSpeedRange: 0.0006,
     rotationRange: 0.003,
-    count: IS_MOBILE ? Math.round(60 * MOBILE_COUNT_SCALE) : 60,
+    count: mobileCount(60),
 };
 
 const FRONT_CFG = {
    speedMin: 0.01,  speedRange: 0.09,
     maxForce: 0.05,
-    scaleMin: 0.05,   scaleRange: 0.15,
+    scaleMin: mobileScale(0.05),   scaleRange: mobileScale(0.15),
     flockWeight: 1.5,
     perceptionR: 90,
     fadeSpeedMin: 0.0004, fadeSpeedRange: 0.0007,
-    rotationRange: 0.005,
-    count: IS_MOBILE ? Math.round(40 * MOBILE_COUNT_SCALE) : 30,
+    rotationRange: 0.01,
+    count: mobileCount(30),
 };
 
 // ─── Image Sources ───────────────────────────────────────────────────────────
@@ -360,8 +383,8 @@ function startAnimation(backSources, middleSources, frontSources) {
             spawnAccumulator -= SPAWN_INTERVAL;
         }
 
-        // draw background
-        ctx.drawImage(bgCanvas, 0, 0);
+        // draw background (scaled up from its reduced-resolution buffer on mobile)
+        ctx.drawImage(bgCanvas, 0, 0, canvas.width, canvas.height);
 
         const breathe = Math.sin((currentTime / ZOOM_CYCLE_MS) * Math.PI * 2);
         const cx = canvas.width / 2, cy = canvas.height / 2;
@@ -399,7 +422,6 @@ window.addEventListener('resize', () => {
     resizeTimeout = setTimeout(() => {
         canvas.width  = window.innerWidth;
         canvas.height = window.innerHeight;
-        createOvalGradient();
-        renderBackground();
+        renderBackground(); // recreates the oval gradient internally at the new size
     }, 150);
 });
