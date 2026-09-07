@@ -1773,8 +1773,20 @@ aspect-ratio: 1 / 1.1;
         display: none;
     }
 
-   
-  
-   
+   .close-icon-visible {
+    width: 25px;
+    height: 25px;
+    display: block !important;
+
+}
+
+.menu-toggle {
+    width: 28px !important;
+    height: 28px !important;
+}
+   .navbar.scrolled .galleryshop-button {
+    margin-top: 5px;
+    font-size: 1.2rem !important; /* Smaller text when scrolled */
+ }
    
 }
