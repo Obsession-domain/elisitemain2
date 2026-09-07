@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── Data ───────────────────────────────────────────────────────────────────
 function loadGalleryItemsFromJSON() {
-    fetch('shop-items.json')
+    fetch('shop-items NOTYET.json')
         .then(r => r.json())
         .then(data => {
             currentItems = data;
