@@ -144,7 +144,7 @@ function openScrollView(startId) {
     // Fixed close button
     const closeBtn = document.createElement('button');
     closeBtn.id        = 'scroll-view-close';
-    closeBtn.innerHTML = '<img src="exitbutton.png" alt="Close" class="close-icon-visible">';
+    closeBtn.innerHTML = '<img src="Exit.png" alt="Close" class="close-icon-visible">';
     closeBtn.addEventListener('click', closeScrollView);
     document.body.appendChild(closeBtn);
 
