@@ -61,19 +61,23 @@ const imageCache = {
     get(url) {
         if (this.cache.has(url)) return Promise.resolve(this.cache.get(url));
         if (this.loading.has(url)) return this.loading.get(url);
-        const promise = new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = url;
+        // img.decode() waits for both fetch AND decode to finish, and does the
+        // decode work off the main thread. Awaiting it (instead of just
+        // `onload`) means the first drawImage() of a boid never has to pay
+        // for a synchronous decode — a big source of the mobile "pop" jank.
+        const promise = img.decode()
+            .then(() => {
                 this.cache.set(url, img);
                 this.loading.delete(url);
-                resolve(img);
-            };
-            img.onerror = () => {
+                return img;
+            })
+            .catch(err => {
                 this.loading.delete(url);
-                reject(new Error(`Failed to load: ${url}`));
-            };
-            img.src = url;
-        });
+                throw err instanceof Error ? err : new Error(`Failed to load: ${url}`);
+            });
         this.loading.set(url, promise);
         return promise;
     }
@@ -327,10 +331,14 @@ const FRONT_CFG = {
 };
 
 // ─── Image Sources ───────────────────────────────────────────────────────────
+// Mobile draws from a smaller pool of images per layer. Fewer distinct files
+// means fewer unique network requests overall (with many boids sharing the
+// same already-cached image), so the pool fills in faster.
 const pad  = i => String(i).padStart(4, '0');
-const BACK_SOURCES   = Array.from({length: 49}, (_, i) => `./back/Radiolarian${pad(i)}.webp`);
-const MIDDLE_SOURCES = Array.from({length: 49}, (_, i) => `./middle/Radiolarian${pad(i)}.webp`);
-const FRONT_SOURCES  = Array.from({length: 49}, (_, i) => `./front/Radiolarian${pad(i)}.webp`);
+const SOURCE_COUNT = IS_MOBILE ? 16 : 49;
+const BACK_SOURCES   = Array.from({length: SOURCE_COUNT}, (_, i) => `./back/Radiolarian${pad(i)}.webp`);
+const MIDDLE_SOURCES = Array.from({length: SOURCE_COUNT}, (_, i) => `./middle/Radiolarian${pad(i)}.webp`);
+const FRONT_SOURCES  = Array.from({length: SOURCE_COUNT}, (_, i) => `./front/Radiolarian${pad(i)}.webp`);
 
 // ─── Start Animation (no preloading) ────────────────────────────────────────
 startAnimation(BACK_SOURCES, MIDDLE_SOURCES, FRONT_SOURCES);
@@ -342,6 +350,28 @@ function startAnimation(backSources, middleSources, frontSources) {
     const frontLayer  = Array.from({length: FRONT_CFG.count},  () => new Boid(frontSources,  FRONT_CFG));
 
     const allBoids = [...frontLayer, ...middleLayer, ...backLayer];
+
+    // Start loading each boid's image ahead of when it's due to spawn
+    // (spawning below activates boids in this same array order), instead of
+    // waiting until the boid's first draw() call to trigger the fetch. That
+    // lazy-on-draw approach is what caused the "lag then pop": the request
+    // only began the instant the boid needed to appear. Staggering the
+    // fetches slightly (worse on mobile: slower network + fewer, smaller
+    // connections) gives images a head start so they're usually already
+    // decoded by the time their boid activates.
+    (function prefetchImages(boids) {
+        const batchSize  = IS_MOBILE ? 3  : 8;
+        const intervalMs = IS_MOBILE ? 60 : 20;
+        let idx = 0;
+        function step() {
+            const end = Math.min(idx + batchSize, boids.length);
+            for (; idx < end; idx++) {
+                imageCache.get(boids[idx].imageSrc).catch(() => {});
+            }
+            if (idx < boids.length) setTimeout(step, intervalMs);
+        }
+        step();
+    })(allBoids);
 
     const SPAWN_INTERVAL = 1;
     const BATCH_SIZE     = 2;

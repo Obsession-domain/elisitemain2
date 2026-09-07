@@ -449,13 +449,13 @@ paypal-cart-button {
 
 }
 
-.galleryshop-button:hover {
-    animation: glow 1s forwards; /* Animation properties */
-
-}
-.galleryshop-button-sub:hover {
-    animation: glow 1s forwards; /* Animation properties */
-
+@media (hover: hover) and (pointer: fine) {
+    .galleryshop-button:hover {
+        animation: glow 1s forwards; /* Animation properties */
+    }
+    .galleryshop-button-sub:hover {
+        animation: glow 1s forwards; /* Animation properties */
+    }
 }
 
 @keyframes glow {
@@ -542,8 +542,10 @@ paypal-cart-button {
  }
 
 
-.home-button:hover {
-    animation: glow2 3s forwards; /* Animation properties */
+@media (hover: hover) and (pointer: fine) {
+    .home-button:hover {
+        animation: glow2 3s forwards; /* Animation properties */
+    }
 }
 
 /* Removed search toggle container styles */
@@ -1643,6 +1645,33 @@ paypal-cart-button {
         backdrop-filter: none;
         background-color: rgba(12, 12, 12, 0.55);
     }
+
+    /* .gallery-item-detail (the open detail card) keeps its blur, per request —
+       but it sits open over the animating canvas the longest of anything on
+       the page, so every frame re-samples the backdrop at full radius. Cut
+       the radius instead of dropping it: still reads as frosted glass, much
+       less to resample. */
+    .gallery-item-detail {
+        -webkit-backdrop-filter: blur(3px);
+        backdrop-filter: blur(3px);
+    }
+
+    /* borderRainbowFade animates box-shadow every frame for 8s on up to 12
+       stacked items on load — box-shadow is a paint property, not a
+       compositor one, so this is one of the most expensive things on the
+       page on a mobile GPU. Drop it and keep just the slideIn fade/translate
+       (opacity + transform are effectively free). */
+    .gallery-item {
+        animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    /* rainbowtext cycles text color on every paragraph and heading on load —
+       decorative only, and color changes force a text repaint. Skip it on
+       mobile; the elements just render straight to their end color. */
+    p, h3 {
+        animation: none;
+        color: #DED7BE;
+    }
 }
 
 /* Fixed close button — top right, always visible */
@@ -1789,4 +1818,14 @@ aspect-ratio: 1 / 1.1;
     font-size: 1.2rem !important; /* Smaller text when scrolled */
  }
    
+}
+/* Respect users who've asked the OS for reduced motion — turns every
+   decorative animation into an instant end-state instead of skipping the
+   content, so layout doesn't jump. */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
 }
