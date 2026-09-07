@@ -322,7 +322,7 @@ function startAnimation(backSources, middleSources, frontSources) {
     const frameInterval = 1000 / (IS_MOBILE ? 24 : 30);
 
     const ZOOM_CYCLE_MS = 75000;
-    const ZOOM_AMPLITUDE = { back: 0.03, middle: 0.15, front: 0.4 };
+    const ZOOM_AMPLITUDE = { back: 0.03, middle: 0.15, front: 0.2 };
 
     let animationPaused = false;
     document.addEventListener('visibilitychange', () => {
