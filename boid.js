@@ -100,6 +100,7 @@ class Boid {
         this.fadeSpeed    = cfg.fadeSpeedMin + Math.random() * cfg.fadeSpeedRange;
         this.rotation     = Math.random() * Math.PI * 2;
         this.rotationSpeed = (Math.random() - 0.5) * cfg.rotationRange;
+this.firstSpawn = true;
 
         this.active = false;
     }
@@ -183,13 +184,19 @@ class Boid {
     }
 
     updateFade() {
-        if (this.fadeState === 'in' && this.opacity < 1) {
-            this.opacity += this.fadeSpeed;
-            if (this.opacity >= 1) { this.opacity = 1; this.fadeState = 'visible'; }
-        } else if (this.fadeState === 'out' && this.opacity > 0) {
+        if (this.fadeState === 'in') {
+    const speed = this.firstSpawn ? this.fadeSpeed * 5 : this.fadeSpeed;
+    this.opacity += speed;
+    if (this.opacity >= 1) {
+        this.opacity = 1;
+        this.fadeState = 'visible';
+        this.firstSpawn = false;   // only once
+    }
+} else if (this.fadeState === 'out') {
             this.opacity -= this.fadeSpeed;
             if (this.opacity <= 0) this.opacity = 0;
         }
+        
     }
 
     update() {
@@ -264,36 +271,36 @@ const IS_MOBILE = window.innerWidth < 768;
 const MOBILE_COUNT_SCALE = 0.5;
 
 const BACK_CFG = {
-    speedMin: 0.018,  speedRange: 0.09,
-    maxForce: 0.05,
-    scaleMin: 0.07,   scaleRange: 0.015,
-    flockWeight: 1.5,
-    perceptionR: 90,
-    fadeSpeedMin: 0.0004, fadeSpeedRange: 0.0007,
-    rotationRange: 0.01,
-    count: IS_MOBILE ? Math.round(60 * MOBILE_COUNT_SCALE) : 60,
-};
-
-const MIDDLE_CFG = {
-    speedMin: 0.009,  speedRange: 0.045,
-    maxForce: 0.025,
-    scaleMin: 0.07,   scaleRange: 0.045,
-    flockWeight: 0.5,
-    perceptionR: 120,
-    fadeSpeedMin: 0.0003, fadeSpeedRange: 0.0006,
-    rotationRange: 0.006,
-    count: IS_MOBILE ? Math.round(10 * MOBILE_COUNT_SCALE) : 10,
-};
-
-const FRONT_CFG = {
-    speedMin: 0.0007, speedRange: 0.004,
-    maxForce: 0.005,
-    scaleMin: 0.30,   scaleRange: 0.10,
+     speedMin: 0.0007, speedRange: 0.004,
+    maxForce: 0.0005,
+    scaleMin: 0.50,   scaleRange: 0.05,
     flockWeight: 0,
     perceptionR: 150,
     fadeSpeedMin: 0.0002, fadeSpeedRange: 0.0004,
     rotationRange: 0.002,
-    count: IS_MOBILE ? Math.max(2, Math.round(4 * MOBILE_COUNT_SCALE)) : 4,
+    count: IS_MOBILE ? Math.max(7, Math.round(4 * MOBILE_COUNT_SCALE)) : 9,
+};
+
+const MIDDLE_CFG = {
+    speedMin: 0.006,  speedRange: 0.045,
+    maxForce: 0.005,
+    scaleMin: 0.15,   scaleRange: 0.045,
+    flockWeight: 0.5,
+    perceptionR: 120,
+    fadeSpeedMin: 0.0003, fadeSpeedRange: 0.0006,
+    rotationRange: 0.003,
+    count: IS_MOBILE ? Math.round(60 * MOBILE_COUNT_SCALE) : 60,
+};
+
+const FRONT_CFG = {
+   speedMin: 0.01,  speedRange: 0.09,
+    maxForce: 0.05,
+    scaleMin: 0.05,   scaleRange: 0.15,
+    flockWeight: 1.5,
+    perceptionR: 90,
+    fadeSpeedMin: 0.0004, fadeSpeedRange: 0.0007,
+    rotationRange: 0.005,
+    count: IS_MOBILE ? Math.round(40 * MOBILE_COUNT_SCALE) : 30,
 };
 
 // ─── Image Sources ───────────────────────────────────────────────────────────
@@ -313,7 +320,7 @@ function startAnimation(backSources, middleSources, frontSources) {
 
     const allBoids = [...frontLayer, ...middleLayer, ...backLayer];
 
-    const SPAWN_INTERVAL = 1500;
+    const SPAWN_INTERVAL = 1;
     const BATCH_SIZE     = 2;
     let spawnIndex       = 0;
     let spawnAccumulator = 0;
@@ -321,7 +328,7 @@ function startAnimation(backSources, middleSources, frontSources) {
     let lastFrameTime = 0;
     const frameInterval = 1000 / (IS_MOBILE ? 24 : 30);
 
-    const ZOOM_CYCLE_MS = 75000;
+    const ZOOM_CYCLE_MS = 7500000;
     const ZOOM_AMPLITUDE = { back: 0.03, middle: 0.15, front: 0.2 };
 
     let animationPaused = false;
