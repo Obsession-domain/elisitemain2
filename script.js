@@ -53,31 +53,36 @@ function setupEventListeners(dropdownSearch) {
         dropdownSearch.addEventListener('click', e => e.stopPropagation());
     }
 
+    // Note: this used to also have a second listener attached to every
+    // .view-option that duplicated what sortAndViewHandler -> toggleGalleryView
+    // already does, so every click rebuilt the whole grid twice. Removed.
     document.querySelectorAll('.sort-option, .view-option').forEach(option => {
         option.addEventListener('click', sortAndViewHandler);
-    });
-
-    document.querySelectorAll('.view-option').forEach(option => {
-        option.addEventListener('click', e => {
-            const viewSize = e.target.textContent.trim().toLowerCase();
-            galleryView.className = 'gallery-view ' + viewSize;
-            loadGalleryItems(currentItems, viewSize === 'small');
-        });
     });
 
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeScrollView();
     });
 
+    // Cached once instead of re-queried on every scroll event, and the
+    // work is throttled to once per animation frame instead of running
+    // for every single scroll event the browser fires (which can be a lot,
+    // especially on mobile momentum-scrolling).
+    const navbar = document.querySelector('.navbar');
+    let scrollTicking = false;
     window.addEventListener('scroll', () => {
-        const navbar       = document.querySelector('.navbar');
-        const isScrollView = galleryView.classList.contains('scroll-view-active');
-        if (isScrollView) {
-            navbar.classList.add('scrolled');
-            return;
-        }
-        navbar.classList.toggle('scrolled', (window.scrollY || window.pageYOffset) > 50);
-    });
+        if (scrollTicking) return;
+        scrollTicking = true;
+        requestAnimationFrame(() => {
+            const isScrollView = galleryView.classList.contains('scroll-view-active');
+            if (isScrollView) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.toggle('scrolled', (window.scrollY || window.pageYOffset) > 50);
+            }
+            scrollTicking = false;
+        });
+    }, { passive: true });
 }
 
 // ─── Gallery Grid ─────────────────────────────────────────────────────────────
@@ -111,8 +116,8 @@ function createGalleryItem(item) {
 
     galleryItem.innerHTML = `
         <div class="image-container">
-            ${firstImage  ? `<img src="${firstImage}"  alt="${item.title}" class="gallery-image default-image">` : ''}
-            ${secondImage ? `<img src="${secondImage}" alt="${item.title}" class="gallery-image hover-image">` : ''}
+            ${firstImage  ? `<img src="${firstImage}"  alt="${item.title}" class="gallery-image default-image" loading="lazy" decoding="async">` : ''}
+            ${secondImage ? `<img src="${secondImage}" alt="${item.title}" class="gallery-image hover-image" loading="lazy" decoding="async">` : ''}
             ${isVideoOnly ? `<div class="play-button-overlay"><div class="play-button-icon"></div></div>` : ''}
         </div>
         <div class="text-content">

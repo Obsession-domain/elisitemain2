@@ -207,53 +207,62 @@ class Boid {
     }
 
     draw(zoom = 1, cx = 0, cy = 0) {
-        if (!this.active || this.opacity <= 0) return;
+    if (!this.active || this.opacity <= 0 || this.loadFailed) return;
 
-        // If image not loaded yet, trigger a load and draw a placeholder
-        if (!this.imageLoaded && !this.loading) {
-            this.loading = true;
-            imageCache.get(this.imageSrc)
-                .then(img => {
-                    this.image = img;
-                    this.imageLoaded = true;
-                    this.loading = false;
-                })
-                .catch(() => {
-                    this.loading = false; // will retry on next draw
-                });
-        }
+    // If image not loaded yet, trigger a load
+    if (!this.imageLoaded && !this.loading) {
+        this.loading = true;
+        imageCache.get(this.imageSrc)
+            .then(img => {
+                this.image = img;
+                this.imageLoaded = true;
+                this.loading = false;
+            })
+            .catch(() => {
+                // On failure, mark as failed and stop retrying
+                this.loadFailed = true;
+                this.loading = false;
+                // Do NOT set imageLoaded – we check loadFailed first.
+            });
+    }
 
-        const px = zoom * this.position.x + cx * (1 - zoom);
-        const py = zoom * this.position.y + cy * (1 - zoom);
-
-        // Placeholder while loading (or if load failed)
-        if (!this.imageLoaded) {
-            ctx.globalAlpha = this.opacity;
-            const size = 24 * this.scale * zoom; // approximate size
-            ctx.setTransform(1, 0, 0, 1, px, py);
-            ctx.fillStyle = 'rgba(180, 180, 180, 0.6)';
-            ctx.beginPath();
-            ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.globalAlpha = 1;
-            return;
-        }
-
-        // Image is ready – draw it
-        const w = this.image.width  * this.scale * zoom;
-        const h = this.image.height * this.scale * zoom;
-        const cos = Math.cos(this.rotation);
-        const sin = Math.sin(this.rotation);
+    // If still not loaded (and not failed), draw a placeholder
+    if (!this.imageLoaded) {
         ctx.globalAlpha = this.opacity;
-        ctx.setTransform(cos, sin, -sin, cos, px, py);
-        ctx.drawImage(this.image, -w / 2, -h / 2, w, h);
+        const size = 24 * this.scale * zoom;
+        ctx.setTransform(1, 0, 0, 1, this.position.x * zoom + cx * (1 - zoom), this.position.y * zoom + cy * (1 - zoom));
+        ctx.fillStyle = 'rgba(180, 180, 180, 0.6)';
+        ctx.beginPath();
+        ctx.arc(0, 0, size / 2, 0, Math.PI * 2);
+        ctx.fill();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.globalAlpha = 1;
+        return;
     }
+
+    // Image is ready – draw it
+    const px = zoom * this.position.x + cx * (1 - zoom);
+    const py = zoom * this.position.y + cy * (1 - zoom);
+    const w = this.image.width  * this.scale * zoom;
+    const h = this.image.height * this.scale * zoom;
+    const cos = Math.cos(this.rotation);
+    const sin = Math.sin(this.rotation);
+    ctx.globalAlpha = this.opacity;
+    ctx.setTransform(cos, sin, -sin, cos, px, py);
+    ctx.drawImage(this.image, -w / 2, -h / 2, w, h);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+}
 }
 
 // ─── Layer Configs ───────────────────────────────────────────────────────────
+// Mobile devices generally have weaker GPUs and this canvas is purely
+// decorative, so it runs fewer boids there — cheaper to update, flock,
+// and draw every frame, with barely any visible difference in a
+// background element on a small screen.
+const IS_MOBILE = window.innerWidth < 768;
+const MOBILE_COUNT_SCALE = 0.5;
+
 const BACK_CFG = {
     speedMin: 0.018,  speedRange: 0.09,
     maxForce: 0.05,
@@ -262,7 +271,7 @@ const BACK_CFG = {
     perceptionR: 90,
     fadeSpeedMin: 0.0004, fadeSpeedRange: 0.0007,
     rotationRange: 0.01,
-    count: 60,
+    count: IS_MOBILE ? Math.round(60 * MOBILE_COUNT_SCALE) : 60,
 };
 
 const MIDDLE_CFG = {
@@ -273,7 +282,7 @@ const MIDDLE_CFG = {
     perceptionR: 120,
     fadeSpeedMin: 0.0003, fadeSpeedRange: 0.0006,
     rotationRange: 0.006,
-    count: 10,
+    count: IS_MOBILE ? Math.round(10 * MOBILE_COUNT_SCALE) : 10,
 };
 
 const FRONT_CFG = {
@@ -284,14 +293,14 @@ const FRONT_CFG = {
     perceptionR: 150,
     fadeSpeedMin: 0.0002, fadeSpeedRange: 0.0004,
     rotationRange: 0.002,
-    count: 4,
+    count: IS_MOBILE ? Math.max(2, Math.round(4 * MOBILE_COUNT_SCALE)) : 4,
 };
 
 // ─── Image Sources ───────────────────────────────────────────────────────────
 const pad  = i => String(i).padStart(4, '0');
-const BACK_SOURCES   = Array.from({length: 49}, (_, i) => `./back/Radiolarian${pad(i)}.png`);
-const MIDDLE_SOURCES = Array.from({length: 49}, (_, i) => `./middle/Radiolarian${pad(i)}.png`);
-const FRONT_SOURCES  = Array.from({length: 49}, (_, i) => `./front/Radiolarian${pad(i)}.png`);
+const BACK_SOURCES   = Array.from({length: 49}, (_, i) => `./back/Radiolarian${pad(i)}.webp`);
+const MIDDLE_SOURCES = Array.from({length: 49}, (_, i) => `./middle/Radiolarian${pad(i)}.webp`);
+const FRONT_SOURCES  = Array.from({length: 49}, (_, i) => `./front/Radiolarian${pad(i)}.webp`);
 
 // ─── Start Animation (no preloading) ────────────────────────────────────────
 startAnimation(BACK_SOURCES, MIDDLE_SOURCES, FRONT_SOURCES);
@@ -304,16 +313,16 @@ function startAnimation(backSources, middleSources, frontSources) {
 
     const allBoids = [...frontLayer, ...middleLayer, ...backLayer];
 
-    const SPAWN_INTERVAL = 2000;
+    const SPAWN_INTERVAL = 1500;
     const BATCH_SIZE     = 2;
     let spawnIndex       = 0;
     let spawnAccumulator = 0;
 
     let lastFrameTime = 0;
-    const frameInterval = 1000 / 30;
+    const frameInterval = 1000 / (IS_MOBILE ? 24 : 30);
 
     const ZOOM_CYCLE_MS = 75000;
-    const ZOOM_AMPLITUDE = { back: 0.03, middle: 0.09, front: 0.22 };
+    const ZOOM_AMPLITUDE = { back: 0.03, middle: 0.15, front: 0.4 };
 
     let animationPaused = false;
     document.addEventListener('visibilitychange', () => {
