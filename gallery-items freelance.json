@@ -153,39 +153,70 @@
    "media": [
      {
        "type": "image",
-       "url": "https://live.staticflickr.com/65535/55446294087_4eda29f05b_c.jpg"
+       "url": "https://live.staticflickr.com/65535/55447715679_67167370db_c.jpg"
      },
 {
        "type": "image",
-       "url": "https://live.staticflickr.com/65535/55446294082_e2f117d174_c.jpg"
-     },
-     {
-       "type": "image",
-       "url": "https://live.staticflickr.com/65535/55447255641_ba8143da99_c.jpg"
-     },
-     {
-       "type": "image",
-       "url": "https://live.staticflickr.com/65535/55447423059_61072a1f1c_c.jpg"
-     },
-     {
-       "type": "image",
        "url": "https://live.staticflickr.com/65535/55447715294_d6da2e9203_c.jpg"
      },
-      {
+     {
        "type": "image",
-       "url": "https://live.staticflickr.com/65535/55447715679_67167370db_c.jpg"
+       "url": "https://live.staticflickr.com/65535/55446294087_4eda29f05b_c.jpg"
      },
      {
        "type": "image",
-       "url": "https://live.staticflickr.com/65535/55446595712_de07040394_c.jpg"
-     },
-     {
-       "type": "image",
-       "url": "https://live.staticflickr.com/65535/55447558171_e332624fba_c.jpg"
+       "url": "https://live.staticflickr.com/65535/55446595742_2574012333_c.jpg"
      }
 
+   ]
 
 
+  },
+
+  {
+   "id": "9",
+   "title": "WALKING STICK",
+   "year": 2025,
+   "medium": "3D Model",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55500966094_437da6d5fd_c.jpg"
+     },
+{
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55500860536_29d722e03f_c.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55500478021_04b77219f2_c.jpg"
+     }
+
+   ]
+
+
+  },
+
+  {
+   "id": "10",
+   "title": "MOLOSCO",
+   "year": 2025,
+   "medium": "3D Model",
+   "description": "",
+   "media": [
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55501593449_249436abd7_c.jpg"
+     },
+{
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55501562928_a5dcc587d9_c.jpg"
+     },
+     {
+       "type": "image",
+       "url": "https://live.staticflickr.com/65535/55501428326_3e3d02d9e9_c.jpg"
+     }
 
    ]
 
